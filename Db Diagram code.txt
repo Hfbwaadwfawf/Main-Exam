@@ -1,0 +1,146 @@
+Table AspNetUsers {
+  Id string [pk]
+  UserName string
+  NormalizedUserName string
+  Email string
+  NormalizedEmail string
+  EmailConfirmed boolean
+  PasswordHash string
+  SecurityStamp string
+  ConcurrencyStamp string
+  PhoneNumber string
+  PhoneNumberConfirmed boolean
+  TwoFactorEnabled boolean
+  LockoutEnd datetime
+  LockoutEnabled boolean
+  AccessFailedCount integer
+}
+
+Table AspNetRoles {
+  Id string [pk]
+  Name string
+  NormalizedName string
+  ConcurrencyStamp string
+}
+
+Table AspNetUserRoles {
+  Id string [pk]
+  UserId string
+  RoleId string
+}
+
+Table AspNetUserClaims {
+  Id string [pk]
+  UserId string
+  ClaimType string
+  ClaimValue string
+}
+
+Table AspNetRoleClaims {
+  Id string [pk]
+  RoleId string
+  ClaimType string
+  ClaimValue string
+}
+
+Table AspNetUserLogins {
+  LoginProvider string
+  ProviderKey string
+  ProviderDisplayName string
+  UserId string
+}
+
+Table AspNetUserTokens {
+  UserId string
+  LoginProvider string
+  Name string
+  Value string
+}
+
+Table Producers {
+  ProducersId integer [pk]
+  UserId string
+  BusinessName string
+  BusinessDescription string
+  BusinessBasedIn string
+}
+
+Table Products {
+  ProductsId integer [pk]
+  ProducersId integer
+  ProductName string
+  Price float
+  Stock integer
+  Description string
+  IsAvailable boolean
+  ImageUrl string
+}
+
+Table Orders {
+  OrdersId integer [pk]
+  UserId string
+  CreatedAt datetime
+  IsDelivery boolean
+  ScheduledTime datetime
+  DeliveryAddress string
+  DeliveryFee float
+  TotalPrice float
+  UsedDiscount boolean
+  DiscountName string
+}
+
+Table OrderProducts {
+  OrderProductsId integer [pk]
+  OrdersId integer
+  ProductsId integer
+  Quantity integer
+}
+
+Table Basket {
+  BasketId integer [pk]
+  UserId string
+}
+
+Table BasketProducts {
+  BasketProductsId integer [pk]
+  BasketId integer
+  ProductsId integer
+  Quantity integer
+}
+
+Table Stamps {
+  StampsId integer [pk]
+  StampName string
+  StampDescription string
+}
+
+Table ProductStamps {
+  ProductStampsId integer [pk]
+  ProductsId integer
+  StampsId integer
+}
+
+Table DiscountCodes {
+  DiscountCodeId integer [pk]
+  Code string
+  Percentage float
+  IsActive boolean
+}
+
+Ref: "DiscountCodes"."Code" < "Orders"."DiscountName"
+Ref: "Products"."ProductsId" < "ProductStamps"."ProductsId"
+Ref: "Stamps"."StampsId" < "ProductStamps"."StampsId"
+Ref: "AspNetUsers"."Id" < "AspNetUserRoles"."UserId"
+Ref: "AspNetRoles"."Id" < "AspNetUserRoles"."RoleId"
+Ref: "AspNetUsers"."Id" < "AspNetUserClaims"."UserId"
+Ref: "AspNetRoles"."Id" < "AspNetRoleClaims"."RoleId"
+Ref: "AspNetUserLogins"."UserId" > "AspNetUsers"."Id"
+Ref: "AspNetUsers"."Id" < "AspNetUserTokens"."UserId"
+Ref: "AspNetUsers"."Id" < "Producers"."UserId"
+Ref: "Producers"."ProducersId" < "Products"."ProducersId"
+Ref: "AspNetUsers"."Id" < "Orders"."UserId"
+Ref: "Orders"."OrdersId" < "OrderProducts"."OrdersId"
+Ref: "Products"."ProductsId" < "OrderProducts"."ProductsId"
+Ref: "AspNetUsers"."Id" < "Basket"."UserId"
+Ref: "Basket"."BasketId" < "BasketProducts"."BasketId"
+Ref: "Products"."ProductsId" < "BasketProducts"."ProductsId"
