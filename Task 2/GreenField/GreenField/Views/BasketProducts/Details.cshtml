@@ -1,0 +1,36 @@
+﻿@model GreenField.Models.BasketProducts
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>BasketProducts</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Basket)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Basket.BasketId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Products)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Products.ProductsId)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.BasketProductsId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

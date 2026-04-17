@@ -1,0 +1,54 @@
+﻿@model GreenField.Models.Orders
+@{
+    ViewData["Title"] = "Order Confirmed";
+}
+
+<h1>Order Confirmed!</h1>
+<p class="text-success">Thank you for your order. Your order number is <strong>#@Model.OrdersId</strong>.</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderProducts)
+        {
+            <tr>
+                <td>@item.Products.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>£@((item.Products.Price * item.Quantity).ToString("0.00"))</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        @if (Model.DeliveryFee > 0)
+        {
+            <tr>
+                <td colspan="2">Delivery Fee</td>
+                <td>£@Model.DeliveryFee.ToString("0.00")</td>
+            </tr>
+        }
+        @if (Model.UsedDiscount)
+        {
+            <tr>
+                <td colspan="2">Discount Applied (@Model.DiscountName)</td>
+                <td>✓</td>
+            </tr>
+        }
+        <tr>
+            <td colspan="2"><strong>Total</strong></td>
+            <td><strong>£@Model.TotalPrice.ToString("0.00")</strong></td>
+        </tr>
+    </tfoot>
+</table>
+
+<p><strong>Status:</strong> @Model.Status</p>
+<p><strong>@(Model.IsDelivery ? "Delivering to" : "Collection date"):</strong>
+    @(Model.IsDelivery ? Model.DeliveryAddress : Model.CollectionDate?.ToString())</p>
+
+<a asp-action="Index" asp-controller="Products" class="btn btn-primary">Continue Shopping</a>
+<a asp-action="Index" class="btn btn-secondary">My Orders</a>

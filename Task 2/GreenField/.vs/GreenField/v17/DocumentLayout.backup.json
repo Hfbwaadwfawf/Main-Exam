@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\deroy\\Documents\\GitHub\\Main-Exam\\Task 2\\GreenField\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DC02C089-8687-4DFE-BA90-EF98E3847E26}|GreenField\\GreenField.csproj|c:\\users\\deroy\\documents\\github\\main-exam\\task 2\\greenfield\\greenfield\\views\\baskets\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DC02C089-8687-4DFE-BA90-EF98E3847E26}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\views\\baskets\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC02C089-8687-4DFE-BA90-EF98E3847E26}|GreenField\\GreenField.csproj|c:\\users\\deroy\\documents\\github\\main-exam\\task 2\\greenfield\\greenfield\\views\\orders\\confirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DC02C089-8687-4DFE-BA90-EF98E3847E26}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\views\\orders\\confirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DC02C089-8687-4DFE-BA90-EF98E3847E26}|GreenField\\GreenField.csproj|c:\\users\\deroy\\documents\\github\\main-exam\\task 2\\greenfield\\greenfield\\views\\orders\\checkout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DC02C089-8687-4DFE-BA90-EF98E3847E26}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\views\\orders\\checkout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\deroy\\Documents\\GitHub\\Main-Exam\\Task 2\\GreenField\\GreenField\\Views\\Baskets\\Index.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Baskets\\Index.cshtml",
+              "ToolTip": "C:\\Users\\deroy\\Documents\\GitHub\\Main-Exam\\Task 2\\GreenField\\GreenField\\Views\\Baskets\\Index.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Baskets\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEoAAABZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-17T01:07:59.626Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Confirmation.cshtml",
+              "DocumentMoniker": "C:\\Users\\deroy\\Documents\\GitHub\\Main-Exam\\Task 2\\GreenField\\GreenField\\Views\\Orders\\Confirmation.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Orders\\Confirmation.cshtml",
+              "ToolTip": "C:\\Users\\deroy\\Documents\\GitHub\\Main-Exam\\Task 2\\GreenField\\GreenField\\Views\\Orders\\Confirmation.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Orders\\Confirmation.cshtml",
+              "ViewState": "AgIAACAAAAAAAAAAAAAqwDUAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-17T01:04:27.913Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Checkout.cshtml",
+              "DocumentMoniker": "C:\\Users\\deroy\\Documents\\GitHub\\Main-Exam\\Task 2\\GreenField\\GreenField\\Views\\Orders\\Checkout.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Orders\\Checkout.cshtml",
+              "ToolTip": "C:\\Users\\deroy\\Documents\\GitHub\\Main-Exam\\Task 2\\GreenField\\GreenField\\Views\\Orders\\Checkout.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Orders\\Checkout.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-17T01:02:52.776Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

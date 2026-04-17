@@ -1,0 +1,70 @@
+﻿@model IEnumerable<GreenField.Models.Products>
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>Products</h1>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.ProductName)</th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th>@Html.DisplayNameFor(model => model.Price)</th>
+            <th>@Html.DisplayNameFor(model => model.Stock)</th>
+            <th>@Html.DisplayNameFor(model => model.IsAvailable)</th>
+            <th>@Html.DisplayNameFor(model => model.Image)</th>
+            <th>Producer</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>£@item.Price.ToString("0.00")</td>
+                <td>@Html.DisplayFor(modelItem => item.Stock)</td>
+                <td>@Html.DisplayFor(modelItem => item.IsAvailable)</td>
+                <td>@Html.DisplayFor(modelItem => item.Image)</td>
+                <td>@Html.DisplayFor(modelItem => item.Producers.BusinessName)</td>
+                <td>
+                    <button class="btn btn-sm btn-success add-to-basket"
+                            data-product-id="@item.ProductsId">
+                        Add to Basket
+                    </button>
+                    <span class="add-feedback-@item.ProductsId text-success" style="display:none;">✓ Added</span>
+                    <a asp-action="Edit" asp-route-id="@item.ProductsId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ProductsId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ProductsId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.add-to-basket').forEach(btn => {
+            btn.addEventListener('click', async function () {
+                const productId = this.dataset.productId;
+                const feedback = document.querySelector(`.add-feedback-${productId}`);
+
+                const formData = new FormData();
+                formData.append('ProductsId', productId);
+
+                await fetch('/basket/create', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                feedback.style.display = 'inline';
+                setTimeout(() => feedback.style.display = 'none', 1500);
+            });
+        });
+    </script>
+}

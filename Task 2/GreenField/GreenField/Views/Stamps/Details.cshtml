@@ -1,0 +1,30 @@
+﻿@model GreenField.Models.Stamps
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Stamps</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StampName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StampName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StampDescription)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StampDescription)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.StampsId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
