@@ -84,8 +84,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>tkcomkk43b</Fingerprint>
-      <Integrity>U8SAKoLcmsqb6EcJvDCVW77yEmA3laJNPMugC9pMxak=</Integrity>
+      <Fingerprint>h5vlpb7h0b</Fingerprint>
+      <Integrity>9QV9RQ0kxWIe6BioPqjMYE1OgBJq8Cfabe0EsJV5IVw=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\honey.png'))</OriginalItemSpec>
@@ -102,8 +102,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>revjvadzyy</Fingerprint>
-      <Integrity>w5zDMohLC65z+YI8PpnDzpxkY4gCMhG9W+nGCATVBps=</Integrity>
+      <Fingerprint>ytbix0c9b2</Fingerprint>
+      <Integrity>Zs0yUQGPFtAFoiRHjxPjucihHi2ErSgK0OpkIdG5OUw=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\milk.png'))</OriginalItemSpec>
@@ -120,8 +120,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>4iyrar52km</Fingerprint>
-      <Integrity>bE3Xznm28d5C8L8AXAgzXDVdZ+1O2x8ohr3QhQQEGCQ=</Integrity>
+      <Fingerprint>rm6quzqrb5</Fingerprint>
+      <Integrity>7bHQisiBzfjixW9+I7EqhMIUKxE6DlN8dC4YQQj9iQI=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\orangejuice.png'))</OriginalItemSpec>

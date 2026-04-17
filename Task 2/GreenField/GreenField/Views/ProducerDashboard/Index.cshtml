@@ -1,0 +1,75 @@
+﻿@model IEnumerable<GreenField.Models.Products>
+@{
+	ViewData["Title"] = "Supplier Dashboard";
+}
+<h1>Supplier Dashboard</h1>
+
+<p>
+    <strong>Total Products:</strong> @ViewBag.TotalProducts
+</p>
+<p>
+    <strong>Low Stock Products:</strong> @ViewBag.LowStockCount
+</p>
+<p>
+    <strong>Total Stock Units:</strong> @ViewBag.TotalStock
+</p>
+
+@if (!Model.Any())
+{
+    <p>You do not have any products yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Take(5))
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.Price.ToString("0.00")</td>
+                    <td>@item.Stock</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h2>Recent Orders</h2>
+
+@if (ViewBag.RecentOrders == null || ((List<GreenField.Models.Orders>)ViewBag.RecentOrders).Count == 0)
+{
+    <p>No recent orders found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in ((List<GreenField.Models.Orders>)ViewBag.RecentOrders).Take(5))
+            {
+                <tr>
+                    <td>@order.OrdersId</td>
+                    <td>@order.OrderDate</td>
+                    <td>@order.Status</td>
+                    <td>@order.TotalPrice.ToString("0.00")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}p>

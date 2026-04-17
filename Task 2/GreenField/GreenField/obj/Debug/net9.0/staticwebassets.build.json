@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Qoyls8cGSMht5miTQbaN1+Gw4iNkn7gS0PBqkSIIc+M=",
+  "Hash": "TvFlj4E2WoFBN5V+WyfZVooInX2n+idA3VRqbNw1Ydo=",
   "Source": "GreenField",
   "BasePath": "_content/GreenField",
   "Mode": "Default",
@@ -4105,8 +4105,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "tkcomkk43b",
-      "Integrity": "U8SAKoLcmsqb6EcJvDCVW77yEmA3laJNPMugC9pMxak=",
+      "Fingerprint": "h5vlpb7h0b",
+      "Integrity": "9QV9RQ0kxWIe6BioPqjMYE1OgBJq8Cfabe0EsJV5IVw=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\honey.png"
@@ -4126,8 +4126,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "revjvadzyy",
-      "Integrity": "w5zDMohLC65z+YI8PpnDzpxkY4gCMhG9W+nGCATVBps=",
+      "Fingerprint": "ytbix0c9b2",
+      "Integrity": "Zs0yUQGPFtAFoiRHjxPjucihHi2ErSgK0OpkIdG5OUw=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\milk.png"
@@ -4147,8 +4147,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "4iyrar52km",
-      "Integrity": "bE3Xznm28d5C8L8AXAgzXDVdZ+1O2x8ohr3QhQQEGCQ=",
+      "Fingerprint": "rm6quzqrb5",
+      "Integrity": "7bHQisiBzfjixW9+I7EqhMIUKxE6DlN8dC4YQQj9iQI=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\orangejuice.png"
@@ -15263,6 +15263,51 @@
       ]
     },
     {
+      "Route": "images/honey.h5vlpb7h0b.png",
+      "AssetFile": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\Task 2\\GreenField\\GreenField\\wwwroot\\images\\honey.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "217927"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"9QV9RQ0kxWIe6BioPqjMYE1OgBJq8Cfabe0EsJV5IVw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 17 Apr 2026 11:18:27 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "h5vlpb7h0b"
+        },
+        {
+          "Name": "label",
+          "Value": "images/honey.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-9QV9RQ0kxWIe6BioPqjMYE1OgBJq8Cfabe0EsJV5IVw="
+        }
+      ]
+    },
+    {
       "Route": "images/honey.png",
       "AssetFile": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\Task 2\\GreenField\\GreenField\\wwwroot\\images\\honey.png",
       "Selectors": [],
@@ -15273,7 +15318,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "82364"
+          "Value": "217927"
         },
         {
           "Name": "Content-Type",
@@ -15281,11 +15326,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"U8SAKoLcmsqb6EcJvDCVW77yEmA3laJNPMugC9pMxak=\""
+          "Value": "\"9QV9RQ0kxWIe6BioPqjMYE1OgBJq8Cfabe0EsJV5IVw=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 17 Apr 2026 09:19:52 GMT"
+          "Value": "Fri, 17 Apr 2026 11:18:27 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15295,52 +15340,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-U8SAKoLcmsqb6EcJvDCVW77yEmA3laJNPMugC9pMxak="
-        }
-      ]
-    },
-    {
-      "Route": "images/honey.tkcomkk43b.png",
-      "AssetFile": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\Task 2\\GreenField\\GreenField\\wwwroot\\images\\honey.png",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "82364"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "image/png"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"U8SAKoLcmsqb6EcJvDCVW77yEmA3laJNPMugC9pMxak=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Fri, 17 Apr 2026 09:19:52 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "tkcomkk43b"
-        },
-        {
-          "Name": "label",
-          "Value": "images/honey.png"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-U8SAKoLcmsqb6EcJvDCVW77yEmA3laJNPMugC9pMxak="
+          "Value": "sha256-9QV9RQ0kxWIe6BioPqjMYE1OgBJq8Cfabe0EsJV5IVw="
         }
       ]
     },
@@ -15355,7 +15355,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1017920"
+          "Value": "431792"
         },
         {
           "Name": "Content-Type",
@@ -15363,11 +15363,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"w5zDMohLC65z+YI8PpnDzpxkY4gCMhG9W+nGCATVBps=\""
+          "Value": "\"Zs0yUQGPFtAFoiRHjxPjucihHi2ErSgK0OpkIdG5OUw=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 17 Apr 2026 09:19:52 GMT"
+          "Value": "Fri, 17 Apr 2026 11:14:57 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15377,12 +15377,12 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-w5zDMohLC65z+YI8PpnDzpxkY4gCMhG9W+nGCATVBps="
+          "Value": "sha256-Zs0yUQGPFtAFoiRHjxPjucihHi2ErSgK0OpkIdG5OUw="
         }
       ]
     },
     {
-      "Route": "images/milk.revjvadzyy.png",
+      "Route": "images/milk.ytbix0c9b2.png",
       "AssetFile": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\Task 2\\GreenField\\GreenField\\wwwroot\\images\\milk.png",
       "Selectors": [],
       "ResponseHeaders": [
@@ -15392,7 +15392,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1017920"
+          "Value": "431792"
         },
         {
           "Name": "Content-Type",
@@ -15400,11 +15400,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"w5zDMohLC65z+YI8PpnDzpxkY4gCMhG9W+nGCATVBps=\""
+          "Value": "\"Zs0yUQGPFtAFoiRHjxPjucihHi2ErSgK0OpkIdG5OUw=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 17 Apr 2026 09:19:52 GMT"
+          "Value": "Fri, 17 Apr 2026 11:14:57 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15414,7 +15414,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "revjvadzyy"
+          "Value": "ytbix0c9b2"
         },
         {
           "Name": "label",
@@ -15422,52 +15422,7 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-w5zDMohLC65z+YI8PpnDzpxkY4gCMhG9W+nGCATVBps="
-        }
-      ]
-    },
-    {
-      "Route": "images/orangejuice.4iyrar52km.png",
-      "AssetFile": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\Task 2\\GreenField\\GreenField\\wwwroot\\images\\orangejuice.png",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "1043179"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "image/png"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"bE3Xznm28d5C8L8AXAgzXDVdZ+1O2x8ohr3QhQQEGCQ=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Fri, 17 Apr 2026 09:19:52 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "4iyrar52km"
-        },
-        {
-          "Name": "label",
-          "Value": "images/orangejuice.png"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-bE3Xznm28d5C8L8AXAgzXDVdZ+1O2x8ohr3QhQQEGCQ="
+          "Value": "sha256-Zs0yUQGPFtAFoiRHjxPjucihHi2ErSgK0OpkIdG5OUw="
         }
       ]
     },
@@ -15482,7 +15437,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1043179"
+          "Value": "159846"
         },
         {
           "Name": "Content-Type",
@@ -15490,11 +15445,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"bE3Xznm28d5C8L8AXAgzXDVdZ+1O2x8ohr3QhQQEGCQ=\""
+          "Value": "\"7bHQisiBzfjixW9+I7EqhMIUKxE6DlN8dC4YQQj9iQI=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 17 Apr 2026 09:19:52 GMT"
+          "Value": "Fri, 17 Apr 2026 11:12:19 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -15504,7 +15459,52 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-bE3Xznm28d5C8L8AXAgzXDVdZ+1O2x8ohr3QhQQEGCQ="
+          "Value": "sha256-7bHQisiBzfjixW9+I7EqhMIUKxE6DlN8dC4YQQj9iQI="
+        }
+      ]
+    },
+    {
+      "Route": "images/orangejuice.rm6quzqrb5.png",
+      "AssetFile": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\Task 2\\GreenField\\GreenField\\wwwroot\\images\\orangejuice.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "159846"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"7bHQisiBzfjixW9+I7EqhMIUKxE6DlN8dC4YQQj9iQI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 17 Apr 2026 11:12:19 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "rm6quzqrb5"
+        },
+        {
+          "Name": "label",
+          "Value": "images/orangejuice.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-7bHQisiBzfjixW9+I7EqhMIUKxE6DlN8dC4YQQj9iQI="
         }
       ]
     },
