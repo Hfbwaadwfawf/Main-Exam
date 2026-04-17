@@ -90,6 +90,7 @@ namespace GreenField.Data
                     BusinessName = "Fresh Farm Produce",
                     BusinessDescription = "Local farm supplying organic fruits and vegetables.",
                     BusinessBasedIn = "Birmingham",
+                    Logo = "/images/DemoLogo.png",
                     UserId = ProducerUser1.Id
                 },
                 new Producers
@@ -97,6 +98,7 @@ namespace GreenField.Data
                     BusinessName = "UK Big Farm",
                     BusinessDescription = "Biggest UK farm supplying organic fruits and vegetables.",
                     BusinessBasedIn = "London",
+                    Logo = "/images/DemoLogo.png",
                     UserId = ProducerUser2.Id
                 },
                 new Producers
@@ -104,6 +106,7 @@ namespace GreenField.Data
                     BusinessName = "Sandwell College Farm",
                     BusinessDescription = "Local farm located in Sandwell supplying organic fruits and vegetables.",
                     BusinessBasedIn = "Sandwell",
+                    Logo = "/images/DemoLogo.png",
                     UserId = ProducerUser3.Id
                 }
             };

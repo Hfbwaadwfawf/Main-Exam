@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-md-7">
-        <form method="post">
+        <form method="post" id="checkout-form">
             <h4>Delivery or Collection?</h4>
             <div class="mb-3">
                 <div class="form-check">
@@ -21,12 +21,14 @@
 
             <div id="delivery-section" class="mb-3">
                 <label class="form-label">Delivery Address</label>
-                <textarea name="DeliveryAddress" class="form-control" rows="3"></textarea>
+                <textarea name="DeliveryAddress" id="DeliveryAddress" class="form-control" rows="3"></textarea>
+                <span id="address-error" class="text-danger" style="display:none">Please enter a delivery address.</span>
             </div>
 
             <div id="collection-section" class="mb-3" style="display:none">
                 <label class="form-label">Collection Date</label>
-                <input type="date" name="CollectionDate" class="form-control" />
+                <input type="date" name="CollectionDate" id="CollectionDate" class="form-control" />
+                <span id="date-error" class="text-danger" style="display:none">Please select a valid collection date.</span>
             </div>
 
             <div class="mb-3">
@@ -91,15 +93,47 @@
         const deliverySection = document.getElementById('delivery-section');
         const collectionSection = document.getElementById('collection-section');
         const deliveryFeeRow = document.getElementById('delivery-fee-row');
+        const form = document.getElementById('checkout-form');
+
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('CollectionDate').setAttribute('min', today);
 
         function toggle() {
             const isDelivery = deliveryRadio.checked;
             deliverySection.style.display = isDelivery ? 'block' : 'none';
             collectionSection.style.display = isDelivery ? 'none' : 'block';
             deliveryFeeRow.style.display = isDelivery ? 'table-row' : 'none';
+            // Clear errors on toggle
+            document.getElementById('address-error').style.display = 'none';
+            document.getElementById('date-error').style.display = 'none';
         }
 
         deliveryRadio.addEventListener('change', toggle);
         collectionRadio.addEventListener('change', toggle);
+
+        form.addEventListener('submit', function (e) {
+            let valid = true;
+
+            if (deliveryRadio.checked) {
+                const address = document.getElementById('DeliveryAddress').value.trim();
+                if (!address) {
+                    document.getElementById('address-error').style.display = 'block';
+                    valid = false;
+                } else {
+                    document.getElementById('address-error').style.display = 'none';
+                }
+            } else {
+                const dateVal = document.getElementById('CollectionDate').value;
+                if (!dateVal || dateVal < today) {
+                    document.getElementById('date-error').style.display = 'block';
+                    valid = false;
+                } else {
+                    document.getElementById('date-error').style.display = 'none';
+                }
+            }
+
+            if (!valid) e.preventDefault();
+        });
     </script>
 }

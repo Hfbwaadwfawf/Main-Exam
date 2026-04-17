@@ -83,6 +83,36 @@ namespace GreenField.Controllers
 
             if (userId == null) return Unauthorized();
 
+            // Server-side validation
+            if (IsDelivery && string.IsNullOrWhiteSpace(DeliveryAddress))
+                ModelState.AddModelError("DeliveryAddress", "Please enter a delivery address.");
+
+            if (!IsDelivery && (CollectionDate == null || CollectionDate < DateOnly.FromDateTime(DateTime.UtcNow)))
+                ModelState.AddModelError("CollectionDate", "Please select a valid collection date.");
+
+            if (!ModelState.IsValid)
+            {
+                var basketForRedisplay = await _context.Basket
+                    .FirstOrDefaultAsync(x => x.UserId == userId && x.Status == true);
+
+                var basketProductsForRedisplay = basketForRedisplay != null
+                    ? await _context.BasketProducts
+                        .Where(x => x.BasketId == basketForRedisplay.BasketId)
+                        .Include(x => x.Products)
+                        .ToListAsync()
+                    : new List<BasketProducts>();
+
+                decimal redisplaySubtotal = basketProductsForRedisplay.Sum(x => x.Products.Price * x.Quantity);
+                var orderCountForRedisplay = await _context.Orders.CountAsync(x => x.UserId == userId);
+
+                ViewBag.BasketProducts = basketProductsForRedisplay;
+                ViewBag.Subtotal = redisplaySubtotal;
+                ViewBag.LoyaltyDiscount = orderCountForRedisplay >= 5 ? redisplaySubtotal * 0.10m : 0m;
+                ViewBag.OrderCount = orderCountForRedisplay;
+
+                return View();
+            }
+
             var basket = await _context.Basket
                 .Include(b => b.BasketProducts)
                     .ThenInclude(bp => bp.Products)
@@ -119,12 +149,7 @@ namespace GreenField.Controllers
                 {
                     ModelState.AddModelError("DiscountCodeInput", "Invalid or inactive discount code.");
 
-                    var basketProducts = await _context.BasketProducts
-                        .Where(x => x.BasketId == basket.BasketId)
-                        .Include(x => x.Products)
-                        .ToListAsync();
-
-                    ViewBag.BasketProducts = basketProducts;
+                    ViewBag.BasketProducts = basket.BasketProducts;
                     ViewBag.Subtotal = basket.BasketProducts.Sum(x => x.Products.Price * x.Quantity);
                     ViewBag.LoyaltyDiscount = loyaltyDiscount;
                     ViewBag.OrderCount = orderCount;
