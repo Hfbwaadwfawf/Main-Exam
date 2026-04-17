@@ -1,84 +1,84 @@
 ﻿@model GreenField.Models.Orders
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Order Details";
 }
 
-<h1>Details</h1>
+<h1>Order #@Model.OrdersId</h1>
+<hr />
 
-<div>
-    <h4>Orders</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OrderDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OrderDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TotalPrice)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TotalPrice)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsDelivery)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsDelivery)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DeliveryAddress)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DeliveryAddress)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DeliveryFee)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DeliveryFee)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CollectionDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CollectionDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UsedDiscount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UsedDiscount)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DiscountName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DiscountName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DiscountCode)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DiscountCode.DiscountCodesId)
-        </dd>
-    </dl>
+<div class="row">
+    <div class="col-md-6">
+        <h4>Order Info</h4>
+        <dl class="row">
+            <dt class="col-sm-4">Order Date</dt>
+            <dd class="col-sm-8">@Model.OrderDate.ToString("dd MMM yyyy, HH:mm")</dd>
+
+            <dt class="col-sm-4">Status</dt>
+            <dd class="col-sm-8">@Model.Status</dd>
+
+            <dt class="col-sm-4">Type</dt>
+            <dd class="col-sm-8">@(Model.IsDelivery ? "Delivery" : "Collection")</dd>
+
+            @if (Model.IsDelivery)
+            {
+                <dt class="col-sm-4">Delivery Address</dt>
+                <dd class="col-sm-8">@Model.DeliveryAddress</dd>
+
+                <dt class="col-sm-4">Delivery Fee</dt>
+                <dd class="col-sm-8">£@Model.DeliveryFee.ToString("0.00")</dd>
+            }
+            else
+            {
+                <dt class="col-sm-4">Collection Date</dt>
+                <dd class="col-sm-8">@Model.CollectionDate?.ToString()</dd>
+            }
+
+            @if (Model.UsedDiscount)
+            {
+                <dt class="col-sm-4">Discount Applied</dt>
+                <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.DiscountName) ? "Loyalty Discount" : Model.DiscountName)</dd>
+            }
+        </dl>
+    </div>
+
+    <div class="col-md-6">
+        <h4>Products</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderProducts)
+                {
+                    <tr>
+                        <td>@item.Products.ProductName</td>
+                        <td>@item.Quantity</td>
+                        <td>£@((item.Products.Price * item.Quantity).ToString("0.00"))</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                @if (Model.DeliveryFee > 0)
+                {
+                    <tr>
+                        <td colspan="2">Delivery Fee</td>
+                        <td>£@Model.DeliveryFee.ToString("0.00")</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="2"><strong>Total</strong></td>
+                    <td><strong>£@Model.TotalPrice.ToString("0.00")</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.OrdersId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.OrdersId" class="btn btn-secondary">Edit</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
 </div>

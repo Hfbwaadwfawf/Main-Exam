@@ -236,6 +236,8 @@ namespace GreenField.Controllers
             if (orders == null) return NotFound();
 
             ViewData["DiscountCodeId"] = new SelectList(_context.DiscountCodes, "DiscountCodesId", "DiscountCodesId", orders.DiscountCodeId);
+            ViewData["StatusList"] = new SelectList(Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().Select(s => new { Value = (int)s, Text = s.ToString() }), "Value", "Text", (int)orders.Status);
+
             return View(orders);
         }
 
@@ -259,7 +261,10 @@ namespace GreenField.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["DiscountCodeId"] = new SelectList(_context.DiscountCodes, "DiscountCodesId", "DiscountCodesId", orders.DiscountCodeId);
+            ViewData["StatusList"] = new SelectList(Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().Select(s => new { Value = (int)s, Text = s.ToString() }), "Value", "Text", (int)orders.Status);
+
             return View(orders);
         }
 

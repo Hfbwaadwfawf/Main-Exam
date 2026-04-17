@@ -1,84 +1,70 @@
 ﻿@model GreenField.Models.Orders
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Order";
 }
 
-<h1>Edit</h1>
-
-<h4>Orders</h4>
+<h1>Edit Order #@Model.OrdersId</h1>
 <hr />
+
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="OrdersId" />
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderDate" class="control-label"></label>
-                <input asp-for="OrderDate" class="form-control" />
-                <span asp-validation-for="OrderDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalPrice" class="control-label"></label>
-                <input asp-for="TotalPrice" class="form-control" />
-                <span asp-validation-for="TotalPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="OrderDate" />
+            <input type="hidden" asp-for="TotalPrice" />
+            <input type="hidden" asp-for="IsDelivery" />
+            <input type="hidden" asp-for="DeliveryAddress" />
+            <input type="hidden" asp-for="DeliveryFee" />
+            <input type="hidden" asp-for="CollectionDate" />
+            <input type="hidden" asp-for="UsedDiscount" />
+            <input type="hidden" asp-for="DiscountName" />
+            <input type="hidden" asp-for="DiscountCodeId" />
+
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" asp-items="@(ViewData["StatusList"] as SelectList)" class="form-select"></select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsDelivery" /> @Html.DisplayNameFor(model => model.IsDelivery)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="DeliveryAddress" class="control-label"></label>
-                <input asp-for="DeliveryAddress" class="form-control" />
-                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DeliveryFee" class="control-label"></label>
-                <input asp-for="DeliveryFee" class="form-control" />
-                <span asp-validation-for="DeliveryFee" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CollectionDate" class="control-label"></label>
-                <input asp-for="CollectionDate" class="form-control" />
-                <span asp-validation-for="CollectionDate" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="UsedDiscount" /> @Html.DisplayNameFor(model => model.UsedDiscount)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="DiscountName" class="control-label"></label>
-                <input asp-for="DiscountName" class="form-control" />
-                <span asp-validation-for="DiscountName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DiscountCodeId" class="control-label"></label>
-                <select asp-for="DiscountCodeId" class="form-control" asp-items="ViewBag.DiscountCodeId"></select>
-                <span asp-validation-for="DiscountCodeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Details" asp-route-id="@Model.OrdersId" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="col-md-6">
+        <h4>Order Summary</h4>
+        <dl class="row">
+            <dt class="col-sm-4">Order Date</dt>
+            <dd class="col-sm-8">@Model.OrderDate.ToString("dd MMM yyyy, HH:mm")</dd>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+            <dt class="col-sm-4">Type</dt>
+            <dd class="col-sm-8">@(Model.IsDelivery ? "Delivery" : "Collection")</dd>
+
+            @if (Model.IsDelivery)
+            {
+                <dt class="col-sm-4">Address</dt>
+                <dd class="col-sm-8">@Model.DeliveryAddress</dd>
+
+                <dt class="col-sm-4">Delivery Fee</dt>
+                <dd class="col-sm-8">£@Model.DeliveryFee.ToString("0.00")</dd>
+            }
+            else
+            {
+                <dt class="col-sm-4">Collection Date</dt>
+                <dd class="col-sm-8">@Model.CollectionDate?.ToString()</dd>
+            }
+
+            <dt class="col-sm-4">Total</dt>
+            <dd class="col-sm-8">£@Model.TotalPrice.ToString("0.00")</dd>
+
+            @if (Model.UsedDiscount)
+            {
+                <dt class="col-sm-4">Discount</dt>
+                <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.DiscountName) ? "Loyalty Discount" : Model.DiscountName)</dd>
+            }
+        </dl>
+    </div>
+</div>
