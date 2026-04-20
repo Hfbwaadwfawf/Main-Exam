@@ -115,34 +115,33 @@ namespace GreenField.Data
 
                 // Eggs
                 new Products { ProductName = "Free Range Eggs (6 pack)", Stock = 120, Price = 2.20m,category = "Eggs", ProducersId = sandwell.ProducersId, Image = "https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=400" },
-                new Products { ProductName = "Duck Eggs (4 pack)", Stock = 30, Price = 3.20m,category = "Eggs", ProducersId = fresh.ProducersId, Image = "https://images.unsplash.com/photo-1569288052389-dac9b0ac9eac?w=400" },
 
                 // Preserves
-                new Products { ProductName = "Strawberry Jam", Stock = 55, Price = 2.80m,category = "Preserves", ProducersId = fresh.ProducersId, Image = "https://images.unsplash.com/photo-1597528380286-cb2adb03de47?w=400" },
-                new Products { ProductName = "Marmalade", Stock = 35, Price = 2.90m,category = "Preserves", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1584744982491-665216d95f8b?w=400" },
+                new Products { ProductName = "Strawberry Jam", Stock = 55, Price = 2.80m,category = "Preserves", ProducersId = fresh.ProducersId, Image = "https://images.unsplash.com/photo-1500912239908-4ee48acb3a7f?w=400" },
+                new Products { ProductName = "Marmalade", Stock = 35, Price = 2.90m,category = "Preserves", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1645871317023-00ca188755de?w=400" },
 
                 // Oils
-                new Products { ProductName = "Rapeseed Oil", Stock = 30, Price = 4.50m,category = "Oils", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1620574387735-3624d75b2dbc?w=400" },
+                new Products { ProductName = "Rapeseed Oil", Stock = 30, Price = 4.50m,category = "Oils", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400" },
 
                 // Drinks
-                new Products { ProductName = "Apple Cider", Stock = 40, Price = 3.80m,category = "Drinks", ProducersId = fresh.ProducersId, Image = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400" },
+                new Products { ProductName = "Apple Cider", Stock = 40, Price = 3.80m,category = "Drinks", ProducersId = fresh.ProducersId, Image = "https://plus.unsplash.com/premium_photo-1663089590359-6ec775dd518e?w=400" },
                 new Products { ProductName = "Orange Juice", Stock = 80, Price = 1.50m,category = "Drinks", ProducersId = fresh.ProducersId, Image = "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400" },
 
                 // Vegetables
-                new Products { ProductName = "Carrots (1kg)", Stock = 90, Price = 0.90m,category = "Vegetable", ProducersId = sandwell.ProducersId, Image = "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400" },
-                new Products { ProductName = "Potatoes (2kg)", Stock = 100, Price = 1.50m,category = "Vegetable", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400" },
-                new Products { ProductName = "Onions (1kg)", Stock = 85, Price = 0.80m,category = "Vegetable", ProducersId = fresh.ProducersId, Image = "https://images.unsplash.com/photo-1587735243615-c03f25aaff15?w=400" },
-                new Products { ProductName = "Tomatoes (500g)", Stock = 65, Price = 1.40m,category = "Vegetable", ProducersId = fresh.ProducersId, Image = "https://images.unsplash.com/photo-1582284540020-8acbe03f4924?w=400" },
-                new Products { ProductName = "Cucumber", Stock = 60, Price = 0.70m,category = "Vegetable", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=400" },
-                new Products { ProductName = "Broccoli", Stock = 55, Price = 1.10m,category = "Vegetable", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?w=400" },
+                new Products { ProductName = "Carrots (1kg)", Stock = 90, Price = 0.90m,category = "Vegetables", ProducersId = sandwell.ProducersId, Image = "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400" },
+                new Products { ProductName = "Potatoes (2kg)", Stock = 100, Price = 1.50m,category = "Vegetables", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400" },
+                new Products { ProductName = "Onions (1kg)", Stock = 85, Price = 0.80m,category = "Vegetables", ProducersId = fresh.ProducersId, Image = "https://images.unsplash.com/photo-1620574387735-3624d75b2dbc?w=400" },
+                new Products { ProductName = "Tomatoes (500g)", Stock = 65, Price = 1.40m,category = "Vegetables", ProducersId = fresh.ProducersId, Image = "https://images.unsplash.com/photo-1582284540020-8acbe03f4924?w=400" },
+                new Products { ProductName = "Cucumber", Stock = 60, Price = 0.70m,category = "Vegetables", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=400" },
+                new Products { ProductName = "Broccoli", Stock = 55, Price = 1.10m,category = "Vegetables", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?w=400" },
 
                 // Fruit
                 new Products { ProductName = "Apples (6 pack)", Stock = 70, Price = 1.80m,category = "Fruit", ProducersId = fresh.ProducersId, Image = "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400" },
 
                 // Meat
                 new Products { ProductName = "Whole Chicken", Stock = 20, Price = 8.50m,category = "Meat", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=400" },
-                new Products { ProductName = "Beef Mince (500g)", Stock = 30, Price = 5.00m,category = "Meat", ProducersId = big.ProducersId, Image = "https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=400" },
-                new Products { ProductName = "Pork Sausages (6 pack)", Stock = 35, Price = 4.20m,category = "Meat", ProducersId = sandwell.ProducersId, Image = "https://images.unsplash.com/photo-1625938144755-652e08e359b7?w=400" }
+                new Products { ProductName = "Beef Mince (500g)", Stock = 30, Price = 5.00m,category = "Meat", ProducersId = big.ProducersId, Image = "https://plus.unsplash.com/premium_photo-1670357599582-de7232e949a0?w=400" },
+                new Products { ProductName = "Pork Sausages (6 pack)", Stock = 35, Price = 4.20m,category = "Meat", ProducersId = sandwell.ProducersId, Image = "https://images.unsplash.com/photo-1691480241974-92481cef09ff?w=400" }
             };
 
             await context.Products.AddRangeAsync(products);

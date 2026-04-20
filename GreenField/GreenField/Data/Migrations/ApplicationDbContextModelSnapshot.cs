@@ -505,7 +505,8 @@ namespace GreenField.Data.Migrations
                 {
                     b.HasOne("GreenField.Models.DiscountCodes", "DiscountCode")
                         .WithMany("Orders")
-                        .HasForeignKey("DiscountCodeId");
+                        .HasForeignKey("DiscountCodeId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("DiscountCode");
                 });

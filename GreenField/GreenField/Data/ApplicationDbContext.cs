@@ -1,22 +1,36 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using GreenField.Models;
 
 namespace GreenField.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
-        public DbSet<GreenField.Models.Basket> Basket { get; set; } = default!;
-        public DbSet<GreenField.Models.Products> Products { get; set; } = default!;
-        public DbSet<GreenField.Models.BasketProducts> BasketProducts { get; set; } = default!;
-        public DbSet<GreenField.Models.DiscountCodes> DiscountCodes { get; set; } = default!;
-        public DbSet<GreenField.Models.LoyaltyPoints> LoyaltyPoints { get; set; } = default!;
-        public DbSet<GreenField.Models.Orders> Orders { get; set; } = default!;
-        public DbSet<GreenField.Models.Producers> Producers { get; set; } = default!;
-        public DbSet<GreenField.Models.OrderProducts> OrderProducts { get; set; } = default!;
+
+        public DbSet<Basket> Basket { get; set; } = default!;
+        public DbSet<Products> Products { get; set; } = default!;
+        public DbSet<BasketProducts> BasketProducts { get; set; } = default!;
+        public DbSet<DiscountCodes> DiscountCodes { get; set; } = default!;
+        public DbSet<LoyaltyPoints> LoyaltyPoints { get; set; } = default!;
+        public DbSet<Orders> Orders { get; set; } = default!;
+        public DbSet<Producers> Producers { get; set; } = default!;
+        public DbSet<OrderProducts> OrderProducts { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // Prevent cascade delete conflict on Orders -> DiscountCodes
+            builder.Entity<Orders>()
+                .HasOne(o => o.DiscountCode)
+                .WithMany(d => d.Orders)
+                .HasForeignKey(o => o.DiscountCodeId)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
     }
 }

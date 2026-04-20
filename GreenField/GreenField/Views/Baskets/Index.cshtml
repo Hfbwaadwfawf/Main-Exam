@@ -1,47 +1,258 @@
-﻿@model IEnumerable<GreenField.Models.Basket>
-
+﻿@model GreenField.Models.Basket
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Your Basket";
+    var items = Model.BasketProducts?.ToList() ?? new List<GreenField.Models.BasketProducts>();
+    var subtotal = items.Sum(i => (i.Products?.Price ?? 0) * i.Quantity);
+    var total = subtotal;
 }
 
-<h1>Index</h1>
+<div class="container" style="padding-top: 40px; padding-bottom: 64px;">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BasketCreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BasketCreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BasketId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BasketId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BasketId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div style="margin-bottom: 32px;">
+        <h1 style="letter-spacing: -1.5px; margin-bottom: 6px;">Your Basket</h1>
+        <p style="color: var(--text-secondary); margin: 0;">Tick the items you'd like to checkout. Unticked items stay in your basket.</p>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-error" style="margin-bottom: 20px;">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z" />
+            </svg>
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" style="margin-bottom: 20px;">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            @TempData["Success"]
+        </div>
+    }
+
+    <form asp-action="Checkout" asp-controller="Baskets" method="post" id="checkoutForm">
+        @Html.AntiForgeryToken()
+
+        <div style="display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start;">
+
+            <!-- Basket Items -->
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+
+                @if (!items.Any())
+                {
+                    <div class="panel panel-body" style="text-align: center; padding: 48px 24px;">
+                        <div style="font-size: 40px; margin-bottom: 12px;">🛒</div>
+                        <h3 style="margin-bottom: 8px;">Your basket is empty</h3>
+                        <p style="margin: 0 auto 20px;">Start adding products from local producers.</p>
+                        <a asp-action="Index" asp-controller="Products" class="btn btn-primary">Browse Products</a>
+                    </div>
+                }
+                else
+                {
+                    <!-- Select All -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px 8px;">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text);">
+                            <input type="checkbox" id="selectAll" style="width: 17px; height: 17px; accent-color: var(--green); cursor: pointer;" />
+                            Select all items
+                        </label>
+                        <span id="selectedCount" style="font-size: 13px; color: var(--text-tertiary);">0 of @items.Count selected</span>
+                    </div>
+
+                    @foreach (var item in items)
+                    {
+                        <div class="basket-item animate-fade-up" id="item-@item.BasketProductsId">
+                            <!-- Checkout checkbox -->
+                            <input type="checkbox"
+                                   name="selectedProductIds"
+                                   value="@item.BasketProductsId"
+                                   class="basket-checkbox"
+                                   style="width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; flex-shrink: 0;" />
+
+                            <!-- Image -->
+                            <div class="basket-item-image" style="display: flex; align-items: center; justify-content: center; background: var(--bg-deep);">
+                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="var(--text-tertiary)" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                                </svg>
+                            </div>
+
+                            <!-- Details -->
+                            <div class="basket-item-details">
+                                <div class="basket-item-name">@item.Products?.ProductName</div>
+                                <div class="basket-item-producer" style="margin-bottom: 8px;">
+                                    @item.Products?.Producers?.BusinessName
+                                </div>
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                    @if (item.Products?.IsAvailable == true)
+                                    {
+                                        <span class="badge badge-success">In Stock</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-error">Out of Stock</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Price + Qty + Delete -->
+                            <div class="basket-item-right">
+                                <div class="basket-item-price">£@((item.Products?.Price ?? 0 * item.Quantity).ToString("0.00"))</div>
+
+                                <div class="qty-controls">
+                                    <form asp-action="UpdateQuantity" asp-controller="Baskets" method="post" style="display:contents;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="basketProductId" value="@item.BasketProductsId" />
+                                        <button type="submit" name="quantity" value="@(item.Quantity - 1)" class="qty-btn">−</button>
+                                        <span class="qty-value">@item.Quantity</span>
+                                        <button type="submit" name="quantity" value="@(item.Quantity + 1)" class="qty-btn">+</button>
+                                    </form>
+                                </div>
+
+                                <form asp-action="RemoveProduct" asp-controller="Baskets" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="basketProductId" value="@item.BasketProductsId" />
+                                    <button type="submit" class="delete-btn" title="Remove item">
+                                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Unselected notice -->
+                    <div id="unselectedNotice" class="alert alert-warning" style="display: none;">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                        </svg>
+                        Unselected items will stay in your basket after checkout.
+                    </div>
+                }
+            </div>
+
+            <!-- Order Summary -->
+            <div class="panel panel-body" style="position: sticky; top: 24px;">
+                <h3 style="font-size: 18px; margin-bottom: 20px;">Order Summary</h3>
+
+                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 12px 14px; background: var(--blue-light); border: 1px solid rgba(59,130,246,0.2); border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 13px; color: var(--blue);">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:1px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                    </svg>
+                    Delivery or pickup will be selected during checkout.
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                        <span style="color: var(--text-secondary);">Subtotal (@items.Count items)</span>
+                        <span style="font-weight: 600;">£@subtotal.ToString("0.00")</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                        <span style="color: var(--text-secondary);">Delivery</span>
+                        <span style="color: var(--text-tertiary);">Calculated at checkout</span>
+                    </div>
+                </div>
+
+                <!-- Discount Code -->
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-tertiary); margin-bottom: 8px; font-family: 'Outfit', sans-serif;">Discount Code</div>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" name="discountCode" placeholder="Enter discount code"
+                               class="form-input" style="flex: 1; font-size: 13px;" />
+                        <button type="submit" class="btn btn-outline btn-sm">Apply</button>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Delivery toggle -->
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-tertiary); margin-bottom: 10px; font-family: 'Outfit', sans-serif;">Fulfilment</div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                        <label style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; border: 1.5px solid var(--glass-border); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s;" id="deliveryLabel">
+                            <input type="radio" name="isDelivery" value="true" id="deliveryOption" style="accent-color: var(--green);" />
+                            Delivery
+                        </label>
+                        <label style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; border: 1.5px solid var(--glass-border); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s;" id="pickupLabel">
+                            <input type="radio" name="isDelivery" value="false" id="pickupOption" style="accent-color: var(--green);" checked />
+                            Collection
+                        </label>
+                    </div>
+                    <div id="addressField" style="display: none;">
+                        <input type="text" name="deliveryAddress" placeholder="Enter delivery address"
+                               class="form-input" style="font-size: 13px;" />
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <span style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800;">Total</span>
+                    <span style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800;">£@subtotal.ToString("0.00")</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full" style="margin-bottom: 10px; font-size: 16px; padding: 14px;">
+                    Proceed to Checkout
+                </button>
+                <a asp-action="Index" asp-controller="Products" class="btn btn-ghost btn-full" style="text-align: center;">
+                    Continue Shopping
+                </a>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<script>
+    const checkboxes = document.querySelectorAll('.basket-checkbox');
+    const selectAll = document.getElementById('selectAll');
+    const countLabel = document.getElementById('selectedCount');
+    const notice = document.getElementById('unselectedNotice');
+    const total = @items.Count;
+
+    function updateUI() {
+        const checked = document.querySelectorAll('.basket-checkbox:checked').length;
+        if (countLabel) countLabel.textContent = checked + ' of ' + total + ' selected';
+        if (selectAll) selectAll.checked = checked === total;
+        if (notice) notice.style.display = (checked > 0 && checked < total) ? 'flex' : 'none';
+    }
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function () {
+            const item = this.closest('.basket-item');
+            item.style.borderColor = this.checked ? 'var(--green)' : '';
+            item.style.boxShadow = this.checked
+                ? '0 0 0 1px var(--green), 0 4px 20px rgba(0,0,0,0.07), 0 0 20px var(--green-glow)'
+                : '';
+            updateUI();
+        });
+    });
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function () {
+            checkboxes.forEach(cb => {
+                cb.checked = this.checked;
+                const item = cb.closest('.basket-item');
+                item.style.borderColor = this.checked ? 'var(--green)' : '';
+                item.style.boxShadow = this.checked
+                    ? '0 0 0 1px var(--green), 0 4px 20px rgba(0,0,0,0.07), 0 0 20px var(--green-glow)'
+                    : '';
+            });
+            updateUI();
+        });
+    }
+
+    // Delivery address toggle
+    const deliveryOpt = document.getElementById('deliveryOption');
+    const pickupOpt = document.getElementById('pickupOption');
+    const addressField = document.getElementById('addressField');
+
+    function toggleAddress() {
+        addressField.style.display = deliveryOpt.checked ? 'block' : 'none';
+    }
+
+    deliveryOpt.addEventListener('change', toggleAddress);
+    pickupOpt.addEventListener('change', toggleAddress);
+</script>
