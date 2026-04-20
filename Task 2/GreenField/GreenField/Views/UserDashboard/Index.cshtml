@@ -1,0 +1,76 @@
+﻿@model List<GreenField.Models.Orders>
+@{
+    ViewData["Title"] = "My Dashboard";
+}
+
+<h1>Dashboard</h1>
+<hr />
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-dark text-white border-secondary">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Total Orders</div>
+                <div class="fs-4">@ViewBag.OrderCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark text-white border-secondary">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Points Balance</div>
+                <div class="fs-4">@((int)ViewBag.Points) pts</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark text-white border-secondary">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Loyalty Discount</div>
+                <div class="fs-4">@((bool)ViewBag.LoyaltyUnlocked ? "10% Unlocked ✓" : $"{(int)ViewBag.OrdersUntilLoyalty} orders away")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark text-white border-secondary">
+            <div class="card-body">
+                <div class="text-muted small mb-1">Total Spent</div>
+                <div class="fs-4">£@Model.Sum(o => o.TotalPrice).ToString("0.00")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4>My Orders</h4>
+@if (!Model.Any())
+{
+    <p class="text-muted">You haven't placed any orders yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Type</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>#@order.OrdersId</td>
+                    <td>@order.OrderDate.ToString("dd MMM yyyy")</td>
+                    <td>@order.Status</td>
+                    <td>@(order.IsDelivery ? "Delivery" : "Collection")</td>
+                    <td>£@order.TotalPrice.ToString("0.00")</td>
+                    <td><a asp-controller="Orders" asp-action="Details" asp-route-id="@order.OrdersId" class="btn btn-sm btn-outline-secondary">View</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

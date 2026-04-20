@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GreenField.Data;
 using GreenField.Models;
 
 namespace GreenField.Controllers
 {
+    [Authorize(Roles = "Admin")] // Discount code management is admin only
     public class DiscountCodesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +16,7 @@ namespace GreenField.Controllers
             _context = context;
         }
 
-        // GET: DiscountCodes
+        // GET: DiscountCodes — list all discount codes
         public async Task<IActionResult> Index()
         {
             return View(await _context.DiscountCodes.ToListAsync());
@@ -49,9 +46,7 @@ namespace GreenField.Controllers
             return View();
         }
 
-        // POST: DiscountCodes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: DiscountCodes/Create — saves a new discount code
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DiscountCodesId,Code,Percentage,IsActive")] DiscountCodes discountCodes)
@@ -81,9 +76,7 @@ namespace GreenField.Controllers
             return View(discountCodes);
         }
 
-        // POST: DiscountCodes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: DiscountCodes/Edit/5 — saves changes to an existing discount code
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DiscountCodesId,Code,Percentage,IsActive")] DiscountCodes discountCodes)
@@ -134,7 +127,7 @@ namespace GreenField.Controllers
             return View(discountCodes);
         }
 
-        // POST: DiscountCodes/Delete/5
+        // POST: DiscountCodes/Delete/5 — confirms and deletes a discount code
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -149,6 +142,7 @@ namespace GreenField.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Helper — checks if a discount code exists by ID
         private bool DiscountCodesExists(int id)
         {
             return _context.DiscountCodes.Any(e => e.DiscountCodesId == id);

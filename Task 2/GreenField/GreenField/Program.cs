@@ -24,7 +24,6 @@ using (var scope = app.Services.CreateScope())
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     await SeedData.SeedUsersAndRoles(services, userManager, roleManager);
     await SeedData.SeedProducers(services);
-    await SeedData.SeedStamps(services);
     await SeedData.SeedProducts(services);
     await SeedData.SeedDiscountCodes(services);
     await SeedData.SeedBasket(services);

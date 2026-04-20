@@ -17,9 +17,6 @@ namespace GreenField.Data
         public DbSet<GreenField.Models.OrderProducts> OrderProducts { get; set; } = default!;
         public DbSet<GreenField.Models.Orders> Orders { get; set; } = default!;
         public DbSet<GreenField.Models.Producers> Producers { get; set; } = default!;
-        public DbSet<GreenField.Models.ProducerStamps> ProducerStamps { get; set; } = default!;
         public DbSet<GreenField.Models.Products> Products { get; set; } = default!;
-        public DbSet<GreenField.Models.ProductStamps> ProductStamps { get; set; } = default!;
-        public DbSet<GreenField.Models.Stamps> Stamps { get; set; } = default!;
     }
 }

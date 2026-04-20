@@ -835,3 +835,5 @@ C:\Users\Digi-T-Y2-4\Documents\Main-Exam\Task 2\GreenField\GreenField\obj\Debug\
 C:\Users\Digi-T-Y2-4\Documents\Main-Exam\Task 2\GreenField\GreenField\obj\Debug\net9.0\GreenField.pdb
 C:\Users\Digi-T-Y2-4\Documents\Main-Exam\Task 2\GreenField\GreenField\obj\Debug\net9.0\GreenField.genruntimeconfig.cache
 C:\Users\Digi-T-Y2-4\Documents\Main-Exam\Task 2\GreenField\GreenField\obj\Debug\net9.0\ref\GreenField.dll
+C:\Users\deroy\Documents\GitHub\Main-Exam\Task 2\GreenField\GreenField\obj\Debug\net9.0\compressed\san7yqefn1-1jcqyz028g.gz
+C:\Users\deroy\Documents\GitHub\Main-Exam\Task 2\GreenField\GreenField\obj\Debug\net9.0\compressed\xs4vr1ciqa-ub71zb6d2l.gz

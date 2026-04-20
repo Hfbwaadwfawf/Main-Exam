@@ -14,6 +14,5 @@
         public Producers Producers { get; set; }
         public ICollection<OrderProducts>? OrderProducts { get; set; }
         public ICollection<BasketProducts>? BasketProducts { get; set; }
-        public ICollection<ProductStamps>? ProductStamps { get; set; }
     }
 }

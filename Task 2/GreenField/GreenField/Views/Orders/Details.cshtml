@@ -12,18 +12,14 @@
         <dl class="row">
             <dt class="col-sm-4">Order Date</dt>
             <dd class="col-sm-8">@Model.OrderDate.ToString("dd MMM yyyy, HH:mm")</dd>
-
             <dt class="col-sm-4">Status</dt>
             <dd class="col-sm-8">@Model.Status</dd>
-
             <dt class="col-sm-4">Type</dt>
             <dd class="col-sm-8">@(Model.IsDelivery ? "Delivery" : "Collection")</dd>
-
             @if (Model.IsDelivery)
             {
                 <dt class="col-sm-4">Delivery Address</dt>
                 <dd class="col-sm-8">@Model.DeliveryAddress</dd>
-
                 <dt class="col-sm-4">Delivery Fee</dt>
                 <dd class="col-sm-8">£@Model.DeliveryFee.ToString("0.00")</dd>
             }
@@ -32,7 +28,6 @@
                 <dt class="col-sm-4">Collection Date</dt>
                 <dd class="col-sm-8">@Model.CollectionDate?.ToString()</dd>
             }
-
             @if (Model.UsedDiscount)
             {
                 <dt class="col-sm-4">Discount Applied</dt>
@@ -79,6 +74,17 @@
 </div>
 
 <div class="mt-3">
-    <a asp-action="Edit" asp-route-id="@Model.OrdersId" class="btn btn-secondary">Edit</a>
-    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.OrdersId" class="btn btn-secondary">Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    }
+    else if (User.IsInRole("Producer"))
+    {
+        <a asp-controller="ProducerDashboard" asp-action="Index" class="btn btn-outline-secondary">Back to Dashboard</a>
+    }
+    else
+    {
+        <a asp-controller="UserDashboard" asp-action="Index" class="btn btn-outline-secondary">Back to Dashboard</a>
+    }
 </div>

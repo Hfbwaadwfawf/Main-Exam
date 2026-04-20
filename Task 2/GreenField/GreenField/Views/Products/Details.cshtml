@@ -1,60 +1,45 @@
 ﻿@model GreenField.Models.Products
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Product Details";
 }
 
-<h1>Details</h1>
+<div class="container page-section">
 
-<div>
-    <h4>Products</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Stock)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Stock)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsAvailable)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsAvailable)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Producers)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Producers.ProducersId)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ProductsId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="panel panel-body-lg">
+
+        <div class="grid-2">
+
+            <div>
+                <img src="@Model.Image" class="card" />
+            </div>
+
+            <div>
+
+                <h2>@Model.ProductName</h2>
+                <p class="text-secondary mb">@Model.Description</p>
+
+                <div class="mb">
+                    <span class="product-card-price">£@Model.Price.ToString("0.00")</span>
+                </div>
+
+                <div class="mb">
+                    <span class="badge badge-success">@Model.Stock in stock</span>
+                </div>
+
+                <div class="mb">
+                    <span class="text-secondary">Producer:</span>
+                    <span class="font-semibold">@Model.Producers.BusinessName</span>
+                </div>
+
+                <div class="flex-gap mt-lg">
+                    <a asp-action="Edit" asp-route-id="@Model.ProductsId" class="btn btn-secondary">Edit</a>
+                    <a asp-action="Index" class="btn btn-ghost">Back</a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
 </div>

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +7,7 @@ using GreenField.Models;
 
 namespace GreenField.Controllers
 {
+    [Authorize(Roles = "Admin")] // Raw order product management is admin only
     public class OrderProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +17,7 @@ namespace GreenField.Controllers
             _context = context;
         }
 
-        // GET: OrderProducts
+        // GET: OrderProducts — list all order product line items across all orders
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.OrderProducts.Include(o => o.Orders).Include(o => o.Products);
@@ -46,7 +44,7 @@ namespace GreenField.Controllers
             return View(orderProducts);
         }
 
-        // GET: OrderProducts/Create
+        // GET: OrderProducts/Create — manually add a product line to an order
         public IActionResult Create()
         {
             ViewData["OrdersId"] = new SelectList(_context.Set<Orders>(), "OrdersId", "OrdersId");
@@ -54,9 +52,7 @@ namespace GreenField.Controllers
             return View();
         }
 
-        // POST: OrderProducts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: OrderProducts/Create — saves a manually created order product entry
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderProductsId,ProductsId,OrdersId,Quantity")] OrderProducts orderProducts)
@@ -72,7 +68,7 @@ namespace GreenField.Controllers
             return View(orderProducts);
         }
 
-        // GET: OrderProducts/Edit/5
+        // GET: OrderProducts/Edit/5 — load an order product line for editing
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,9 +86,7 @@ namespace GreenField.Controllers
             return View(orderProducts);
         }
 
-        // POST: OrderProducts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: OrderProducts/Edit/5 — saves changes to an order product line
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("OrderProductsId,ProductsId,OrdersId,Quantity")] OrderProducts orderProducts)
@@ -147,7 +141,7 @@ namespace GreenField.Controllers
             return View(orderProducts);
         }
 
-        // POST: OrderProducts/Delete/5
+        // POST: OrderProducts/Delete/5 — confirms and removes an order product line
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -162,6 +156,7 @@ namespace GreenField.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Helper — checks if an order product record exists by ID
         private bool OrderProductsExists(int id)
         {
             return _context.OrderProducts.Any(e => e.OrderProductsId == id);

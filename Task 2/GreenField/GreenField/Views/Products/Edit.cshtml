@@ -1,64 +1,77 @@
 ﻿@model GreenField.Models.Products
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Product";
 }
 
-<h1>Edit</h1>
+<div class="container page-section">
+    <div class="container-sm">
 
-<h4>Products</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ProductsId" />
-            <div class="form-group">
-                <label asp-for="ProducersId" class="control-label"></label>
-                <select asp-for="ProducersId" class="form-control" asp-items="ViewBag.ProducersId"></select>
-                <span asp-validation-for="ProducersId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProductName" class="control-label"></label>
-                <input asp-for="ProductName" class="form-control" />
-                <span asp-validation-for="ProductName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Stock" class="control-label"></label>
-                <input asp-for="Stock" class="form-control" />
-                <span asp-validation-for="Stock" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsAvailable" /> @Html.DisplayNameFor(model => model.IsAvailable)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        <div class="mb-lg">
+            <h1>Edit Product</h1>
+            <p class="text-secondary">Update product details.</p>
+        </div>
+
+        <div class="panel panel-body-lg">
+
+            <form asp-action="Edit">
+                <input type="hidden" asp-for="ProductsId" />
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-error mb"></div>
+
+                <div class="grid-2">
+
+                    <div class="form-group">
+                        <label asp-for="ProductName" class="form-label"></label>
+                        <input asp-for="ProductName" class="form-input" />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ProducersId" class="form-label"></label>
+                        <select asp-for="ProducersId" class="form-select" asp-items="ViewBag.ProducersId"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Price" class="form-label"></label>
+                        <input asp-for="Price" class="form-input" />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Stock" class="form-label"></label>
+                        <input asp-for="Stock" class="form-input" />
+                    </div>
+
+                </div>
+
+                <div class="form-group mt">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-textarea"></textarea>
+                </div>
+
+                <div class="form-group mt">
+                    <label asp-for="Image" class="form-label"></label>
+                    <input asp-for="Image" class="form-input" />
+                </div>
+
+                <div class="form-group form-check mt">
+                    <label class="flex-gap-sm">
+                        <input class="form-check-input" asp-for="IsAvailable" />
+                        <span>Available</span>
+                    </label>
+                </div>
+
+                <div class="flex-between mt-lg">
+                    <a asp-action="Index" class="btn btn-ghost">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

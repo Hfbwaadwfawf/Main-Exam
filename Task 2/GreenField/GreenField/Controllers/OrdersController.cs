@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +8,7 @@ using System.Security.Claims;
 
 namespace GreenField.Controllers
 {
+    [Authorize]
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,14 +18,13 @@ namespace GreenField.Controllers
             _context = context;
         }
 
-        // GET: Orders
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Orders.Include(o => o.DiscountCode);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -43,11 +40,9 @@ namespace GreenField.Controllers
             return View(orders);
         }
 
-        // GET: Orders/Checkout
         public async Task<IActionResult> Checkout()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             if (userId == null) return Unauthorized();
 
             var basket = await _context.Basket
@@ -75,15 +70,12 @@ namespace GreenField.Controllers
             return View();
         }
 
-        // POST: Orders/Checkout
         [HttpPost]
         public async Task<IActionResult> Checkout(bool IsDelivery, string? DeliveryAddress, DateOnly? CollectionDate, string? DiscountCodeInput)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             if (userId == null) return Unauthorized();
 
-            // Server-side validation
             if (IsDelivery && string.IsNullOrWhiteSpace(DeliveryAddress))
                 ModelState.AddModelError("DeliveryAddress", "Please enter a delivery address.");
 
@@ -92,46 +84,43 @@ namespace GreenField.Controllers
 
             if (!ModelState.IsValid)
             {
-                var basketForRedisplay = await _context.Basket
+                var basket = await _context.Basket
                     .FirstOrDefaultAsync(x => x.UserId == userId && x.Status == true);
 
-                var basketProductsForRedisplay = basketForRedisplay != null
+                var basketProducts = basket != null
                     ? await _context.BasketProducts
-                        .Where(x => x.BasketId == basketForRedisplay.BasketId)
+                        .Where(x => x.BasketId == basket.BasketId)
                         .Include(x => x.Products)
                         .ToListAsync()
                     : new List<BasketProducts>();
 
-                decimal redisplaySubtotal = basketProductsForRedisplay.Sum(x => x.Products.Price * x.Quantity);
-                var orderCountForRedisplay = await _context.Orders.CountAsync(x => x.UserId == userId);
+                decimal subtotal = basketProducts.Sum(x => x.Products.Price * x.Quantity);
+                var orderCount = await _context.Orders.CountAsync(x => x.UserId == userId);
 
-                ViewBag.BasketProducts = basketProductsForRedisplay;
-                ViewBag.Subtotal = redisplaySubtotal;
-                ViewBag.LoyaltyDiscount = orderCountForRedisplay >= 5 ? redisplaySubtotal * 0.10m : 0m;
-                ViewBag.OrderCount = orderCountForRedisplay;
+                ViewBag.BasketProducts = basketProducts;
+                ViewBag.Subtotal = subtotal;
+                ViewBag.LoyaltyDiscount = orderCount >= 5 ? subtotal * 0.10m : 0m;
+                ViewBag.OrderCount = orderCount;
 
                 return View();
             }
 
-            var basket = await _context.Basket
+            var basketFull = await _context.Basket
                 .Include(b => b.BasketProducts)
                     .ThenInclude(bp => bp.Products)
                 .FirstOrDefaultAsync(x => x.UserId == userId && x.Status == true);
 
-            if (basket == null || !basket.BasketProducts.Any())
+            if (basketFull == null || !basketFull.BasketProducts.Any())
                 return RedirectToAction("Index", "Baskets");
 
-            decimal subtotal = basket.BasketProducts.Sum(x => x.Products.Price * x.Quantity);
+            decimal subtotalFinal = basketFull.BasketProducts.Sum(x => x.Products.Price * x.Quantity);
 
-            // Loyalty discount
-            var orderCount = await _context.Orders.CountAsync(x => x.UserId == userId);
-            decimal loyaltyDiscount = orderCount >= 5 ? subtotal * 0.10m : 0m;
-            subtotal -= loyaltyDiscount;
+            var orderCountFinal = await _context.Orders.CountAsync(x => x.UserId == userId);
+            decimal loyaltyDiscountFinal = orderCountFinal >= 5 ? subtotalFinal * 0.10m : 0m;
+            subtotalFinal -= loyaltyDiscountFinal;
 
-            // Delivery fee
             decimal deliveryFee = IsDelivery ? 3.99m : 0m;
 
-            // Discount code
             DiscountCodes? discountCode = null;
             decimal codeDiscount = 0m;
 
@@ -142,25 +131,24 @@ namespace GreenField.Controllers
 
                 if (discountCode != null)
                 {
-                    codeDiscount = subtotal * (discountCode.Percentage / 100m);
-                    subtotal -= codeDiscount;
+                    codeDiscount = subtotalFinal * (discountCode.Percentage / 100m);
+                    subtotalFinal -= codeDiscount;
                 }
                 else
                 {
                     ModelState.AddModelError("DiscountCodeInput", "Invalid or inactive discount code.");
 
-                    ViewBag.BasketProducts = basket.BasketProducts;
-                    ViewBag.Subtotal = basket.BasketProducts.Sum(x => x.Products.Price * x.Quantity);
-                    ViewBag.LoyaltyDiscount = loyaltyDiscount;
-                    ViewBag.OrderCount = orderCount;
+                    ViewBag.BasketProducts = basketFull.BasketProducts;
+                    ViewBag.Subtotal = basketFull.BasketProducts.Sum(x => x.Products.Price * x.Quantity);
+                    ViewBag.LoyaltyDiscount = loyaltyDiscountFinal;
+                    ViewBag.OrderCount = orderCountFinal;
 
                     return View();
                 }
             }
 
-            decimal total = subtotal + deliveryFee;
+            decimal total = subtotalFinal + deliveryFee;
 
-            // Create order
             var order = new Orders
             {
                 UserId = userId,
@@ -171,10 +159,10 @@ namespace GreenField.Controllers
                 DeliveryAddress = IsDelivery ? DeliveryAddress : null,
                 DeliveryFee = deliveryFee,
                 CollectionDate = !IsDelivery ? CollectionDate : null,
-                UsedDiscount = discountCode != null || loyaltyDiscount > 0,
+                UsedDiscount = discountCode != null || loyaltyDiscountFinal > 0,
                 DiscountName = discountCode?.Code,
                 DiscountCodeId = discountCode?.DiscountCodesId,
-                OrderProducts = basket.BasketProducts.Select(bp => new OrderProducts
+                OrderProducts = basketFull.BasketProducts.Select(bp => new OrderProducts
                 {
                     ProductsId = bp.ProductsId,
                     Quantity = bp.Quantity
@@ -183,16 +171,23 @@ namespace GreenField.Controllers
 
             _context.Orders.Add(order);
 
-            // Clear basket
-            _context.BasketProducts.RemoveRange(basket.BasketProducts);
-            basket.Status = false;
+            _context.BasketProducts.RemoveRange(basketFull.BasketProducts);
+            basketFull.Status = false;
+
+            var loyaltyPoints = await _context.LoyaltyPoints.FirstOrDefaultAsync(u => u.UserId == userId);
+            if (loyaltyPoints == null)
+            {
+                loyaltyPoints = new LoyaltyPoints { UserId = userId, Points = 0 };
+                _context.LoyaltyPoints.Add(loyaltyPoints);
+            }
+
+            loyaltyPoints.Points += (int)(total * 100);
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Confirmation", new { id = order.OrdersId });
         }
 
-        // GET: Orders/Confirmation/5
         public async Task<IActionResult> Confirmation(int id)
         {
             var order = await _context.Orders
@@ -206,7 +201,7 @@ namespace GreenField.Controllers
             return View(order);
         }
 
-        // GET: Orders/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["DiscountCodeId"] = new SelectList(_context.DiscountCodes, "DiscountCodesId", "DiscountCodesId");
@@ -214,20 +209,27 @@ namespace GreenField.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrdersId,UserId,OrderDate,TotalPrice,Status,IsDelivery,DeliveryAddress,DeliveryFee,CollectionDate,UsedDiscount,DiscountName,DiscountCodeId")] Orders orders)
+        public async Task<IActionResult> Create([Bind("IsDelivery,DeliveryAddress,DeliveryFee,CollectionDate,DiscountName,DiscountCodeId")] Orders orders)
         {
             if (ModelState.IsValid)
             {
+                orders.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                orders.OrderDate = DateTime.UtcNow;
+                orders.Status = OrderStatus.Pending;
+                orders.TotalPrice = 0;
+
                 _context.Add(orders);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["DiscountCodeId"] = new SelectList(_context.DiscountCodes, "DiscountCodesId", "DiscountCodesId", orders.DiscountCodeId);
             return View(orders);
         }
 
-        // GET: Orders/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -236,21 +238,32 @@ namespace GreenField.Controllers
             if (orders == null) return NotFound();
 
             ViewData["DiscountCodeId"] = new SelectList(_context.DiscountCodes, "DiscountCodesId", "DiscountCodesId", orders.DiscountCodeId);
-            ViewData["StatusList"] = new SelectList(Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().Select(s => new { Value = (int)s, Text = s.ToString() }), "Value", "Text", (int)orders.Status);
+            ViewData["StatusList"] = new SelectList(Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>()
+                .Select(s => new { Value = (int)s, Text = s.ToString() }), "Value", "Text", (int)orders.Status);
 
             return View(orders);
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrdersId,UserId,OrderDate,TotalPrice,Status,IsDelivery,DeliveryAddress,DeliveryFee,CollectionDate,UsedDiscount,DiscountName,DiscountCodeId")] Orders orders)
+        public async Task<IActionResult> Edit(int id, [Bind("OrdersId,IsDelivery,DeliveryAddress,DeliveryFee,CollectionDate,DiscountName,DiscountCodeId,Status")] Orders orders)
         {
             if (id != orders.OrdersId) return NotFound();
+
+            var existing = await _context.Orders.AsNoTracking()
+                .FirstOrDefaultAsync(o => o.OrdersId == id);
+
+            if (existing == null) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    orders.UserId = existing.UserId;
+                    orders.OrderDate = existing.OrderDate;
+                    orders.TotalPrice = existing.TotalPrice;
+
                     _context.Update(orders);
                     await _context.SaveChangesAsync();
                 }
@@ -263,12 +276,10 @@ namespace GreenField.Controllers
             }
 
             ViewData["DiscountCodeId"] = new SelectList(_context.DiscountCodes, "DiscountCodesId", "DiscountCodesId", orders.DiscountCodeId);
-            ViewData["StatusList"] = new SelectList(Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().Select(s => new { Value = (int)s, Text = s.ToString() }), "Value", "Text", (int)orders.Status);
-
             return View(orders);
         }
 
-        // GET: Orders/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -283,6 +294,7 @@ namespace GreenField.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

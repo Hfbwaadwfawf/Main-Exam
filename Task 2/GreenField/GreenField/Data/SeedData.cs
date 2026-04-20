@@ -17,7 +17,6 @@ namespace GreenField.Data
                 }
             }
 
-            // Seed admin user
             var adminUser = await userManager.FindByEmailAsync("admin@example.com");
             if (adminUser == null)
             {
@@ -27,7 +26,6 @@ namespace GreenField.Data
             if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
                 await userManager.AddToRoleAsync(adminUser, "Admin");
 
-            // Seed producer user 1
             var producerUser = await userManager.FindByEmailAsync("producer@example.com");
             if (producerUser == null)
             {
@@ -37,7 +35,6 @@ namespace GreenField.Data
             if (!await userManager.IsInRoleAsync(producerUser, "Producer"))
                 await userManager.AddToRoleAsync(producerUser, "Producer");
 
-            // Seed producer user 2
             var producerUser2 = await userManager.FindByEmailAsync("producer2@example.com");
             if (producerUser2 == null)
             {
@@ -47,7 +44,6 @@ namespace GreenField.Data
             if (!await userManager.IsInRoleAsync(producerUser2, "Producer"))
                 await userManager.AddToRoleAsync(producerUser2, "Producer");
 
-            // Seed producer user 3
             var producerUser3 = await userManager.FindByEmailAsync("producer3@example.com");
             if (producerUser3 == null)
             {
@@ -57,7 +53,6 @@ namespace GreenField.Data
             if (!await userManager.IsInRoleAsync(producerUser3, "Producer"))
                 await userManager.AddToRoleAsync(producerUser3, "Producer");
 
-            // Seed standard user
             var normalUser = await userManager.FindByEmailAsync("user@example.com");
             if (normalUser == null)
             {
@@ -115,32 +110,6 @@ namespace GreenField.Data
             await context.SaveChangesAsync();
         }
 
-        public static async Task SeedStamps(IServiceProvider serviceProvider)
-        {
-            var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-
-            if (context.Stamps.Any())
-                return;
-
-            var stamps = new List<Stamps>
-            {
-                new Stamps { StampName = "Organic", StampDescription = "Produced without synthetic pesticides or fertilisers." },
-                new Stamps { StampName = "Seasonal", StampDescription = "Only available during its natural growing season." },
-                new Stamps { StampName = "Locally Sourced", StampDescription = "Sourced within a short distance of where it is sold." },
-                new Stamps { StampName = "Raw & Unfiltered", StampDescription = "Completely unprocessed and in its most natural state." },
-                new Stamps { StampName = "Artisan", StampDescription = "Handcrafted in small batches using traditional methods." },
-                new Stamps { StampName = "Gluten Free", StampDescription = "Contains no gluten, suitable for coeliacs." },
-                new Stamps { StampName = "Soil Association Certified", StampDescription = "Certified organic by the Soil Association." },
-                new Stamps { StampName = "Red Tractor Approved", StampDescription = "Meets Red Tractor standards for food safety and traceability." },
-                new Stamps { StampName = "Family Run Business", StampDescription = "Independently owned and operated by a family." },
-                new Stamps { StampName = "Sustainably Farmed", StampDescription = "Farmed using methods that protect the environment for future generations." },
-                new Stamps { StampName = "Award Winning", StampDescription = "Recognised with industry awards for quality and excellence." }
-            };
-
-            context.Stamps.AddRange(stamps);
-            await context.SaveChangesAsync();
-        }
-
         public static async Task SeedProducts(IServiceProvider serviceProvider)
         {
             var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
@@ -152,96 +121,60 @@ namespace GreenField.Data
             if (FreshFarmProduce == null || UkBigFarm == null || SandwellCollegeFarm == null)
                 throw new Exception("Producer not found.");
 
-            var organic = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Organic");
-            var seasonal = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Seasonal");
-            var locallySourced = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Locally Sourced");
-            var rawAndUnfiltered = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Raw & Unfiltered");
-            var artisan = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Artisan");
-            var glutenFree = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Gluten Free");
-            var soilAssociation = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Soil Association Certified");
-            var redTractor = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Red Tractor Approved");
-            var familyRun = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Family Run Business");
-            var sustainablyFarmed = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Sustainably Farmed");
-            var awardWinning = await context.Stamps.FirstOrDefaultAsync(x => x.StampName == "Award Winning");
-
             if (context.Products.Any())
                 return;
 
-            var milk = new Products
+            var products = new List<Products>
             {
-                ProductName = "Milk",
-                Stock = 100,
-                Price = 1.20m,
-                ProducersId = SandwellCollegeFarm.ProducersId,
-                Image = "/images/milk.png",
-                ProductStamps = new List<ProductStamps>
-                {
-                    new ProductStamps { Stamps = organic },
-                    new ProductStamps { Stamps = locallySourced }
-                }
+                // Dairy & Basics
+                new Products { ProductName = "Milk", Stock = 100, Price = 1.20m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400" },
+                new Products { ProductName = "Orange Juice", Stock = 80, Price = 1.50m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400" },
+                new Products { ProductName = "Honey", Stock = 60, Price = 3.00m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400" },
+                new Products { ProductName = "Sourdough", Stock = 40, Price = 2.50m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=400" },
+                new Products { ProductName = "Free Range Eggs (6 pack)", Stock = 120, Price = 2.20m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=400" },
+                new Products { ProductName = "Butter", Stock = 75, Price = 1.80m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400" },
+                new Products { ProductName = "Cheddar Cheese", Stock = 50, Price = 3.50m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1618164435735-413d3b066c9a?w=400" },
+                new Products { ProductName = "Natural Yoghurt", Stock = 60, Price = 1.90m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400" },
+                new Products { ProductName = "Double Cream", Stock = 45, Price = 1.60m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=400" },
+                new Products { ProductName = "Free Range Duck Eggs (4 pack)", Stock = 30, Price = 3.20m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1569288052389-dac9b0ac9eac?w=400" },
+
+                // Preserves & Oils
+                new Products { ProductName = "Strawberry Jam", Stock = 55, Price = 2.80m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1597528380286-cb2adb03de47?w=400" },
+                new Products { ProductName = "Blackcurrant Jam", Stock = 40, Price = 2.80m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400" },
+                new Products { ProductName = "Marmalade", Stock = 35, Price = 2.90m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1584744982491-665216d95f8b?w=400" },
+                new Products { ProductName = "Rapeseed Oil", Stock = 30, Price = 4.50m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1620574387735-3624d75b2dbc?w=400" },
+
+                // Drinks
+                new Products { ProductName = "Apple Cider", Stock = 40, Price = 3.80m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400" },
+                new Products { ProductName = "Pear Juice", Stock = 35, Price = 2.20m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1546173159-315724a31696?w=400" },
+
+                // Vegetables
+                new Products { ProductName = "Carrots (1kg)", Stock = 90, Price = 0.90m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400" },
+                new Products { ProductName = "Potatoes (2kg)", Stock = 100, Price = 1.50m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400" },
+                new Products { ProductName = "Onions (1kg)", Stock = 85, Price = 0.80m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1587735243615-c03f25aaff15?w=400" },
+                new Products { ProductName = "Garlic (3 bulbs)", Stock = 70, Price = 1.20m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?w=400" },
+                new Products { ProductName = "Tomatoes (500g)", Stock = 65, Price = 1.40m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1582284540020-8acbe03f4924?w=400" },
+                new Products { ProductName = "Cucumber", Stock = 60, Price = 0.70m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=400" },
+                new Products { ProductName = "Courgette", Stock = 55, Price = 0.90m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1596363505729-4190a9506133?w=400" },
+                new Products { ProductName = "Spinach (200g)", Stock = 50, Price = 1.30m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400" },
+                new Products { ProductName = "Kale (200g)", Stock = 45, Price = 1.20m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1524179091875-bf99a9a6af57?w=400" },
+                new Products { ProductName = "Broccoli", Stock = 55, Price = 1.10m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?w=400" },
+                new Products { ProductName = "Leeks (2 pack)", Stock = 40, Price = 1.00m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1587411768638-ec71f8e33b78?w=400" },
+                new Products { ProductName = "Beetroot (500g)", Stock = 35, Price = 1.30m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?w=400" },
+                new Products { ProductName = "Pumpkin", Stock = 25, Price = 2.50m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1570586437263-ab629fccc818?w=400" },
+
+                // Fruit
+                new Products { ProductName = "Apples (6 pack)", Stock = 70, Price = 1.80m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400" },
+
+                // Meat
+                new Products { ProductName = "Free Range Whole Chicken", Stock = 20, Price = 8.50m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=400" },
+                new Products { ProductName = "Pork Sausages (6 pack)", Stock = 35, Price = 4.20m, ProducersId = SandwellCollegeFarm.ProducersId, Image = "https://images.unsplash.com/photo-1625938144755-652e08e359b7?w=400" },
+                new Products { ProductName = "Beef Mince (500g)", Stock = 30, Price = 5.00m, ProducersId = UkBigFarm.ProducersId, Image = "https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=400" },
+                new Products { ProductName = "Lamb Chops (4 pack)", Stock = 20, Price = 7.50m, ProducersId = FreshFarmProduce.ProducersId, Image = "https://images.unsplash.com/photo-1599021456807-25db0f974333?w=400" },
             };
 
-            var orangeJuice = new Products
-            {
-                ProductName = "Orange Juice",
-                Stock = 80,
-                Price = 1.50m,
-                ProducersId = FreshFarmProduce.ProducersId,
-                Image = "/images/orangejuice.png",
-                ProductStamps = new List<ProductStamps>
-                {
-                    new ProductStamps { Stamps = organic },
-                    new ProductStamps { Stamps = seasonal }
-                }
-            };
-
-            var honey = new Products
-            {
-                ProductName = "Honey",
-                Stock = 60,
-                Price = 3.00m,
-                ProducersId = UkBigFarm.ProducersId,
-                Image = "/images/honey.png",
-                ProductStamps = new List<ProductStamps>
-                {
-                    new ProductStamps { Stamps = seasonal },
-                    new ProductStamps { Stamps = rawAndUnfiltered }
-                }
-            };
-
-            var sourdough = new Products
-            {
-                ProductName = "Sourdough",
-                Stock = 40,
-                Price = 2.50m,
-                ProducersId = SandwellCollegeFarm.ProducersId,
-                Image = "/images/sourdough.png",
-                ProductStamps = new List<ProductStamps>
-                {
-                    new ProductStamps { Stamps = artisan },
-                    new ProductStamps { Stamps = glutenFree }
-                }
-            };
-
-            await context.Products.AddRangeAsync(new List<Products> { milk, orangeJuice, honey, sourdough });
+            await context.Products.AddRangeAsync(products);
             await context.SaveChangesAsync();
-
-            // Seed producer stamps
-            if (!context.ProducerStamps.Any())
-            {
-                var producerStamps = new List<ProducerStamps>
-                {
-                    new ProducerStamps { ProducersId = FreshFarmProduce.ProducersId, Stamps = soilAssociation },
-                    new ProducerStamps { ProducersId = FreshFarmProduce.ProducersId, Stamps = familyRun },
-                    new ProducerStamps { ProducersId = UkBigFarm.ProducersId, Stamps = redTractor },
-                    new ProducerStamps { ProducersId = UkBigFarm.ProducersId, Stamps = awardWinning },
-                    new ProducerStamps { ProducersId = SandwellCollegeFarm.ProducersId, Stamps = sustainablyFarmed },
-                    new ProducerStamps { ProducersId = SandwellCollegeFarm.ProducersId, Stamps = familyRun }
-                };
-
-                context.ProducerStamps.AddRange(producerStamps);
-                await context.SaveChangesAsync();
-            }
         }
 
         public static async Task SeedDiscountCodes(IServiceProvider serviceProvider)

@@ -1,69 +1,205 @@
 ﻿@model IEnumerable<GreenField.Models.Products>
+
 @{
     ViewData["Title"] = "Products";
 }
 
-<h1>Products</h1>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.ProductName)</th>
-            <th>@Html.DisplayNameFor(model => model.Description)</th>
-            <th>@Html.DisplayNameFor(model => model.Price)</th>
-            <th>@Html.DisplayNameFor(model => model.Stock)</th>
-            <th>@Html.DisplayNameFor(model => model.IsAvailable)</th>
-            <th>@Html.DisplayNameFor(model => model.Image)</th>
-            <th>Producer</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="flex-between mb-lg animate-fade-up">
+    <div>
+        <p class="overline">Marketplace</p>
+        <h2>Products</h2>
+    </div>
+    <div class="navbar-actions">
+        <button id="filterToggle" class="btn btn-glass">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            </svg>
+            Filters
+        </button>
+        @if (User.IsInRole("Admin"))
         {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>£@item.Price.ToString("0.00")</td>
-                <td>@Html.DisplayFor(modelItem => item.Stock)</td>
-                <td>@Html.DisplayFor(modelItem => item.IsAvailable)</td>
-                <td>@Html.DisplayFor(modelItem => item.Image)</td>
-                <td>@Html.DisplayFor(modelItem => item.Producers.BusinessName)</td>
-                <td>
-                    <button class="btn btn-sm btn-success add-to-basket"
-                            data-product-id="@item.ProductsId">
-                        Add to Basket
-                    </button>
-                    <span class="add-feedback-@item.ProductsId text-success" style="display:none;">✓ Added</span>
-                    <a asp-action="Edit" asp-route-id="@item.ProductsId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ProductsId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ProductsId">Delete</a>
-                </td>
-            </tr>
+            <a asp-action="Create" class="btn btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Add Product
+            </a>
         }
-    </tbody>
-</table>
+    </div>
+</div>
+
+{{FILTER_PANEL}}
+<div id="filterPanel" class="panel panel-body mb-lg animate-slide-down" style="display:none;">
+    <form method="get">
+        <div class="grid-4" style="align-items: end; gap: 14px;">
+
+            <div class="form-group">
+                <label class="form-label">Search</label>
+                <input type="text" name="search" placeholder="Search products…" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Min Price</label>
+                <input type="number" step="0.01" name="minPrice" placeholder="£0.00" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Max Price</label>
+                <input type="number" step="0.01" name="maxPrice" placeholder="£999" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Producer</label>
+                <select name="producer" class="form-select">
+                    <option value="">All Producers</option>
+                    @foreach (var p in ViewBag.Producers)
+                    {
+                        <option value="@p.ProducersId">@p.BusinessName</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Sort By</label>
+                <select name="sort" class="form-select">
+                    <option value="">Default</option>
+                    <option value="price_asc">Price: Low to High</option>
+                    <option value="price_desc">Price: High to Low</option>
+                    <option value="name">Name A–Z</option>
+                    <option value="stock">Stock Level</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="align-self: flex-end;">
+                <button type="submit" class="btn btn-primary btn-full">Apply Filters</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+{{PRODUCT_GRID}}
+<div class="grid-4">
+    @foreach (var item in Model)
+    {
+        <div class="product-card animate-fade-up">
+
+            <div class="product-card-image">
+                <img src="@item.Image" alt="@item.ProductName" loading="lazy" />
+
+                <div class="product-card-badges">
+                    @if (item.Stock <= 5)
+                    {
+                        <span class="badge badge-warning">Low Stock</span>
+                    }
+                </div>
+            </div>
+
+            <div class="product-card-body">
+                <p class="product-card-name truncate">@item.ProductName</p>
+                <p class="product-card-producer">@item.Producers?.BusinessName</p>
+
+                <p class="text-xs text-tertiary mb-sm">
+                    Stock: @item.Stock units
+                </p>
+
+                <div class="product-card-footer">
+                    <span class="product-card-price">£@item.Price.ToString("0.00")</span>
+
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="add-feedback-@item.ProductsId text-green text-sm font-semibold"
+                              style="display:none; transition: opacity 0.2s;">
+                            Added ✓
+                        </span>
+                        <button class="btn btn-secondary btn-sm add-to-basket"
+                                data-product-id="@item.ProductsId">
+                            + Add
+                        </button>
+                    </div>
+                </div>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="divider" style="margin: 12px 0 10px;"></div>
+                    <div style="display:flex; gap:12px;">
+                        <a asp-action="Edit" asp-route-id="@item.ProductsId"
+                           class="text-sm text-secondary font-medium" style="text-decoration:none;">
+                            Edit
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.ProductsId"
+                           class="text-sm text-secondary font-medium" style="text-decoration:none;">
+                            Details
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.ProductsId"
+                           class="text-sm text-error font-medium" style="text-decoration:none;">
+                            Delete
+                        </a>
+                    </div>
+                }
+            </div>
+
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="panel panel-body-lg" style="text-align:center; padding: 64px 32px;">
+        <div style="font-size:40px; margin-bottom:16px; opacity:0.4;">🌿</div>
+        <h3 class="mb-sm">No products found</h3>
+        <p class="text-tertiary" style="max-width:none;">Try adjusting your filters or add a new product.</p>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-primary mt-lg">+ Add First Product</a>
+        }
+    </div>
+}
 
 @section Scripts {
     <script>
+        // Filter panel toggle
+        const filterToggle = document.getElementById('filterToggle');
+        const filterPanel  = document.getElementById('filterPanel');
+
+        filterToggle.addEventListener('click', () => {
+            const isHidden = filterPanel.style.display === 'none';
+            filterPanel.style.display = isHidden ? 'block' : 'none';
+            filterToggle.classList.toggle('active', isHidden);
+        });
+
+        // Add to basket
         document.querySelectorAll('.add-to-basket').forEach(btn => {
             btn.addEventListener('click', async function () {
                 const productId = this.dataset.productId;
-                const feedback = document.querySelector(`.add-feedback-${productId}`);
+                const feedback  = document.querySelector(`.add-feedback-${productId}`);
+
+                this.disabled = true;
+                this.textContent = '…';
 
                 const formData = new FormData();
                 formData.append('ProductsId', productId);
 
-                await fetch('/basket/create', {
-                    method: 'POST',
-                    body: formData
-                });
+                try {
+                    await fetch('/basket/create', { method: 'POST', body: formData });
 
-                feedback.style.display = 'inline';
-                setTimeout(() => feedback.style.display = 'none', 1500);
+                    feedback.style.display = 'inline';
+                    this.textContent = '✓ Added';
+                    this.classList.add('btn-primary');
+                    this.classList.remove('btn-secondary');
+
+                    setTimeout(() => {
+                        feedback.style.display = 'none';
+                        this.textContent = '+ Add';
+                        this.classList.remove('btn-primary');
+                        this.classList.add('btn-secondary');
+                        this.disabled = false;
+                    }, 1500);
+
+                } catch {
+                    this.textContent = '+ Add';
+                    this.disabled = false;
+                }
             });
         });
     </script>

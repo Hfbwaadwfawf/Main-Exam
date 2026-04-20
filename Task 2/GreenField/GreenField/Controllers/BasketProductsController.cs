@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +7,7 @@ using GreenField.Models;
 
 namespace GreenField.Controllers
 {
+    [Authorize(Roles = "Admin")] // Raw basket product management is admin only
     public class BasketProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +17,7 @@ namespace GreenField.Controllers
             _context = context;
         }
 
-        // GET: BasketProducts
+        // GET: BasketProducts — list all basket product records across all users
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.BasketProducts.Include(b => b.Basket).Include(b => b.Products);
@@ -46,7 +44,7 @@ namespace GreenField.Controllers
             return View(basketProducts);
         }
 
-        // GET: BasketProducts/Create
+        // GET: BasketProducts/Create — manually add a product to a basket
         public IActionResult Create()
         {
             ViewData["BasketId"] = new SelectList(_context.Basket, "BasketId", "BasketId");
@@ -54,9 +52,7 @@ namespace GreenField.Controllers
             return View();
         }
 
-        // POST: BasketProducts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: BasketProducts/Create — saves a manually created basket product entry
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("BasketProductsId,BasketId,ProductsId,Quantity")] BasketProducts basketProducts)
@@ -72,7 +68,7 @@ namespace GreenField.Controllers
             return View(basketProducts);
         }
 
-        // GET: BasketProducts/Edit/5
+        // GET: BasketProducts/Edit/5 — load a basket product for editing
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,9 +86,7 @@ namespace GreenField.Controllers
             return View(basketProducts);
         }
 
-        // POST: BasketProducts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: BasketProducts/Edit/5 — saves changes to a basket product entry
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("BasketProductsId,BasketId,ProductsId,Quantity")] BasketProducts basketProducts)
@@ -147,7 +141,7 @@ namespace GreenField.Controllers
             return View(basketProducts);
         }
 
-        // POST: BasketProducts/Delete/5
+        // POST: BasketProducts/Delete/5 — confirms and removes a basket product entry
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -162,6 +156,7 @@ namespace GreenField.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Helper — checks if a basket product record exists by ID
         private bool BasketProductsExists(int id)
         {
             return _context.BasketProducts.Any(e => e.BasketProductsId == id);

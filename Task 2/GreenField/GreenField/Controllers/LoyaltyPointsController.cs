@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GreenField.Data;
 using GreenField.Models;
 
 namespace GreenField.Controllers
 {
+    [Authorize(Roles = "Admin")] // Loyalty points management is admin only
     public class LoyaltyPointsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +16,7 @@ namespace GreenField.Controllers
             _context = context;
         }
 
-        // GET: LoyaltyPoints
+        // GET: LoyaltyPoints — list all user loyalty point records
         public async Task<IActionResult> Index()
         {
             return View(await _context.LoyaltyPoints.ToListAsync());
@@ -43,15 +40,13 @@ namespace GreenField.Controllers
             return View(loyaltyPoints);
         }
 
-        // GET: LoyaltyPoints/Create
+        // GET: LoyaltyPoints/Create — manually create a points record
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: LoyaltyPoints/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: LoyaltyPoints/Create — saves a manually created loyalty points record
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("LoyaltyPointsId,UserId,Points")] LoyaltyPoints loyaltyPoints)
@@ -65,7 +60,7 @@ namespace GreenField.Controllers
             return View(loyaltyPoints);
         }
 
-        // GET: LoyaltyPoints/Edit/5
+        // GET: LoyaltyPoints/Edit/5 — load a points record for editing
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,9 +76,7 @@ namespace GreenField.Controllers
             return View(loyaltyPoints);
         }
 
-        // POST: LoyaltyPoints/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: LoyaltyPoints/Edit/5 — saves changes to a loyalty points record
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("LoyaltyPointsId,UserId,Points")] LoyaltyPoints loyaltyPoints)
@@ -134,7 +127,7 @@ namespace GreenField.Controllers
             return View(loyaltyPoints);
         }
 
-        // POST: LoyaltyPoints/Delete/5
+        // POST: LoyaltyPoints/Delete/5 — confirms and deletes a loyalty points record
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -149,6 +142,7 @@ namespace GreenField.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Helper — checks if a loyalty points record exists by ID
         private bool LoyaltyPointsExists(int id)
         {
             return _context.LoyaltyPoints.Any(e => e.LoyaltyPointsId == id);
