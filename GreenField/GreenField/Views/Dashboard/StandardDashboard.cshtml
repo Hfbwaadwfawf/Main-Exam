@@ -176,6 +176,16 @@
         </div>
     </div>
 
+    <!-- 🔴 LOGOUT BUTTON -->
+    <div style="margin-top: 2rem; text-align:center;">
+        <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-ghost" style="color:#dc3545; border-color:#dc3545;">
+                Log Out
+            </button>
+        </form>
+    </div>
+
 </div>
 
 <script>

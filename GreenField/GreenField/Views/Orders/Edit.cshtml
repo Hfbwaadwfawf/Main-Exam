@@ -1,84 +1,40 @@
 @model GreenField.Models.Orders
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Order";
 }
 
-<h1 class="page-title">Edit</h1>
+<h1 class="page-title">Edit Order</h1>
+<p class="muted">Order #@Model.OrdersId</p>
 
-<h4>Orders</h4>
-<hr />
-<div style="display:flex;flex-direction:column;gap:.75rem;max-width:520px;">
-    <div style="max-width:520px;">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="OrdersId" />
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-input" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderDate" class="control-label"></label>
-                <input asp-for="OrderDate" class="form-input" />
-                <span asp-validation-for="OrderDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TotalPrice" class="control-label"></label>
-                <input asp-for="TotalPrice" class="form-input" />
-                <span asp-validation-for="TotalPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-input"></select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsDelivery" /> @Html.DisplayNameFor(model => model.IsDelivery)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="DeliveryAddress" class="control-label"></label>
-                <input asp-for="DeliveryAddress" class="form-input" />
-                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DeliveryFee" class="control-label"></label>
-                <input asp-for="DeliveryFee" class="form-input" />
-                <span asp-validation-for="DeliveryFee" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CollectionDate" class="control-label"></label>
-                <input asp-for="CollectionDate" class="form-input" />
-                <span asp-validation-for="CollectionDate" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="UsedDiscount" /> @Html.DisplayNameFor(model => model.UsedDiscount)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="DiscountName" class="control-label"></label>
-                <input asp-for="DiscountName" class="form-input" />
-                <span asp-validation-for="DiscountName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DiscountCodeId" class="control-label"></label>
-                <select asp-for="DiscountCodeId" class="form-input" asp-items="ViewBag.DiscountCodeId"></select>
-                <span asp-validation-for="DiscountCodeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn-primary" />
-            </div>
-        </form>
-    </div>
+<div style="max-width:520px;">
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="OrdersId" />
+
+        <div class="form-group">
+            <label asp-for="Status">Status</label>
+            <select asp-for="Status" class="form-input"
+                    asp-items="Html.GetEnumSelectList<GreenField.Models.OrderStatus>()"></select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="IsDelivery">Delivery?</label>
+            <input asp-for="IsDelivery" type="checkbox" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="DeliveryAddress">Delivery Address</label>
+            <input asp-for="DeliveryAddress" class="form-input" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="CollectionDate">Collection / Delivery Date</label>
+            <input asp-for="CollectionDate" type="datetime-local" class="form-input" />
+        </div>
+
+        <div class="form-group" style="margin-top:1.5rem; display:flex; gap:.75rem;">
+            <input type="submit" value="Save Changes" class="btn-primary" />
+            <a asp-action="Details" asp-route-id="@Model.OrdersId" class="btn-secondary">Cancel</a>
+        </div>
+    </form>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

@@ -67,14 +67,8 @@
 
                 <!-- Image -->
                 <div class="producer-card-image">
-                    @if (!string.IsNullOrEmpty(producer.Logo))
-                    {
-                        <img src="@producer.Logo" alt="@producer.BusinessName" />
-                    }
-                    else
-                    {
-                        <span class="img-placeholder">Producer Image</span>
-                    }
+                    <img src="@(!string.IsNullOrEmpty(producer.Logo) ? producer.Logo : "/images/DemoLogo.png")"
+                         alt="@producer.BusinessName" />
                 </div>
 
                 <!-- Body -->

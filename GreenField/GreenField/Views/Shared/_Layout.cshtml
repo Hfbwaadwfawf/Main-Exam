@@ -3,26 +3,21 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - GLH</title>
+    <title>@ViewData["Title"] - GreenField</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script src="~/js/accessibility.js" asp-append-version="true"></script>
 </head>
 <body>
-
     <nav class="site-nav">
-        <!-- Logo -->
-        <a class="nav-logo" asp-area="" asp-controller="Home" asp-action="Index">GLH</a>
-
-        <!-- Centre links -->
+        <a class="nav-logo" asp-area="" asp-controller="Home" asp-action="Index">GreenField</a>
         <div class="nav-links">
-            <a asp-area="" asp-controller="Home"      asp-action="Index">Home</a>
-            <a asp-area="" asp-controller="Products"  asp-action="Index">Store</a>
+            <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+            <a asp-area="" asp-controller="Products" asp-action="Index">Store</a>
             <a asp-area="" asp-controller="Producers" asp-action="Index">Producers</a>
-            <a asp-area="" asp-controller="Home"      asp-action="About">About</a>
+            <a asp-area="" asp-controller="Home" asp-action="About">About</a>
             <a asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
         </div>
-
-        <!-- Right: basket + account -->
         <div class="nav-right">
             @if (User.Identity?.IsAuthenticated == true)
             {
@@ -30,13 +25,13 @@
                     <i class="bi bi-basket3-fill" style="font-size:1.2rem;"></i>
                     <span class="basket-badge">0</span>
                 </a>
-                <a asp-area="Identity" asp-page="/Account/Manage/Index" class="nav-avatar">
+                <a asp-area="" asp-controller="Dashboard" asp-action="Index">
                     <i class="bi bi-person-fill"></i>
                 </a>
             }
             else
             {
-                <a asp-area="Identity" asp-page="/Account/Login"    class="btn btn-ghost btn-sm">Log in</a>
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-ghost btn-sm">Log in</a>
                 <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-sm">Sign up</a>
             }
         </div>
@@ -48,8 +43,52 @@
         </main>
     </div>
 
+    <div id="a11y-widget" aria-label="Accessibility options">
+
+        <button id="a11y-trigger"
+                class="a11y-trigger"
+                aria-expanded="false"
+                aria-controls="a11y-panel"
+                title="Accessibility options"
+                onclick="a11y.togglePanel()">
+            <i class="bi bi-universal-access"></i>
+        </button>
+
+        <div id="a11y-panel" class="a11y-panel" role="dialog" aria-label="Accessibility settings">
+
+            <p class="a11y-panel-heading">Accessibility</p>
+
+            <p class="a11y-group-label">Text size</p>
+            <div class="a11y-row">
+                <button class="a11y-btn" onclick="a11y.changeFontSize(-2)" aria-label="Decrease font size">
+                    <i class="bi bi-dash-lg"></i> Smaller
+                </button>
+                <button class="a11y-btn" onclick="a11y.changeFontSize(2)" aria-label="Increase font size">
+                    <i class="bi bi-plus-lg"></i> Larger
+                </button>
+            </div>
+
+            <p class="a11y-group-label">Display</p>
+            <div class="a11y-col">
+                <button class="a11y-btn a11y-btn-wide" id="a11y-btn-dark" onclick="a11y.toggleDark()" aria-pressed="false">
+                    <i class="bi bi-moon-stars"></i> Dark mode
+                </button>
+                <button class="a11y-btn a11y-btn-wide" id="a11y-btn-contrast" onclick="a11y.toggleContrast()" aria-pressed="false">
+                    <i class="bi bi-circle-half"></i> High contrast
+                </button>
+            </div>
+
+            <p class="a11y-group-label">Reading</p>
+            <button class="a11y-btn a11y-btn-wide" id="a11y-btn-read" onclick="a11y.toggleReadAloud()">
+                <i class="bi bi-volume-up"></i> Read aloud
+            </button>
+
+            <button class="a11y-reset" onclick="a11y.resetAll()">Reset all</button>
+
+        </div>
+    </div>
+
     <partial name="_ValidationScriptsPartial" />
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>

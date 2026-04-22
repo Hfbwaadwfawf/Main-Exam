@@ -116,7 +116,7 @@ namespace GreenField.Controllers
             return RedirectToAction(nameof(Details), new { id = orderId });
         }
 
-        // POST: Orders/Cancel — Customer cancels own pending order
+        // POST: Orders/Cancel
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int orderId)

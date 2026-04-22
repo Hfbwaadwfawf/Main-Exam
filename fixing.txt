@@ -1,0 +1,8 @@
+Booking not working properly, crashes, probably move confirmation and thingy to be handeled by the orders controller.
+User dashboard edit should be authorised to them, style the details for orders, style index for orders, make details redirect to the dashboard.
+fix producers creating products
+Fix dark mode without making styles 3k lines long
+Fix products create controller to not make images compulsory
+Make producer create menu not have user id as an input even tho it makes sense.And logo not compulsory
+Make producers and normal order list just like admin how they can see the products in their order just like the admins can
+and make the status updatable by producers, and same as for standard users but they can only cancel their order. so they have a cancel button and all it does is it sets that orders status to be cancelled so we can fully negate having to go into the order index, details and edit pages.

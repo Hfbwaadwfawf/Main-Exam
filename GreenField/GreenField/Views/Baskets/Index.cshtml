@@ -130,11 +130,8 @@
             </div>
 
             <!-- Checkout form -->
-            <form asp-action="Checkout" asp-controller="Baskets" method="post" id="checkoutForm">
-                @Html.AntiForgeryToken()
+            <form asp-action="Confirmation" asp-controller="Baskets" method="get" id="checkoutForm">
                 <div id="hiddenCheckboxes"></div>
-                <input type="hidden" name="isDelivery" value="false" />
-                <input type="hidden" name="deliveryAddress" value="" />
                 <input type="hidden" name="discountCode" id="appliedCodeInput" value="" />
 
                 <button type="submit" class="btn-checkout" id="checkoutBtn" disabled>
@@ -164,8 +161,6 @@
         const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
         let appliedDiscount = 0;
         let appliedCode = '';
-
-        // ── Init ──────────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
             updateSummary();
             updateSelectAll();
