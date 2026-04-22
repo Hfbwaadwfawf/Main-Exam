@@ -1,25 +1,25 @@
-﻿@model GreenField.Models.DiscountCodes
+@model GreenField.Models.DiscountCodes
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1 class="page-title">Create</h1>
 
 <h4>DiscountCodes</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div style="display:flex;flex-direction:column;gap:.75rem;max-width:520px;">
+    <div style="max-width:520px;">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Code" class="control-label"></label>
-                <input asp-for="Code" class="form-control" />
+                <input asp-for="Code" class="form-input" />
                 <span asp-validation-for="Code" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Percentage" class="control-label"></label>
-                <input asp-for="Percentage" class="form-control" />
+                <input asp-for="Percentage" class="form-input" />
                 <span asp-validation-for="Percentage" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
@@ -28,7 +28,7 @@
                 </label>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn-primary" />
             </div>
         </form>
     </div>

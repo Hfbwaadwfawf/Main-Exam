@@ -1,258 +1,379 @@
-﻿@model GreenField.Models.Basket
+@model GreenField.Models.Basket
 @{
     ViewData["Title"] = "Your Basket";
     var items = Model.BasketProducts?.ToList() ?? new List<GreenField.Models.BasketProducts>();
-    var subtotal = items.Sum(i => (i.Products?.Price ?? 0) * i.Quantity);
-    var total = subtotal;
 }
 
-<div class="container" style="padding-top: 40px; padding-bottom: 64px;">
+<div class="basket-layout">
 
-    <div style="margin-bottom: 32px;">
-        <h1 style="letter-spacing: -1.5px; margin-bottom: 6px;">Your Basket</h1>
-        <p style="color: var(--text-secondary); margin: 0;">Tick the items you'd like to checkout. Unticked items stay in your basket.</p>
-    </div>
+    <!-- ── Left: Item List ── -->
+    <div class="basket-main">
+        <h1 class="basket-title">Your Basket</h1>
+        <p class="basket-subtitle">Tick the items you'd like to checkout. Unticked items stay in your basket.</p>
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-error" style="margin-bottom: 20px;">
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z" />
-            </svg>
-            @TempData["Error"]
-        </div>
-    }
+        @if (!items.Any())
+        {
+            <div class="basket-empty">
+                <i class="bi bi-basket3"></i>
+                <p>Your basket is empty.</p>
+                <a asp-controller="Products" asp-action="Index" class="btn-primary">Browse Products</a>
+            </div>
+        }
+        else
+        {
+            <!-- Select all bar -->
+            <div class="select-all-bar">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="selectAll" class="custom-checkbox" />
+                    <span>Select all items</span>
+                </label>
+                <span class="selected-count" id="selectedCount">0 of @items.Count selected</span>
+            </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success" style="margin-bottom: 20px;">
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            @TempData["Success"]
-        </div>
-    }
-
-    <form asp-action="Checkout" asp-controller="Baskets" method="post" id="checkoutForm">
-        @Html.AntiForgeryToken()
-
-        <div style="display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start;">
-
-            <!-- Basket Items -->
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-
-                @if (!items.Any())
+            <!-- Items -->
+            <div class="basket-items" id="basketItems">
+                @foreach (var item in items)
                 {
-                    <div class="panel panel-body" style="text-align: center; padding: 48px 24px;">
-                        <div style="font-size: 40px; margin-bottom: 12px;">🛒</div>
-                        <h3 style="margin-bottom: 8px;">Your basket is empty</h3>
-                        <p style="margin: 0 auto 20px;">Start adding products from local producers.</p>
-                        <a asp-action="Index" asp-controller="Products" class="btn btn-primary">Browse Products</a>
-                    </div>
-                }
-                else
-                {
-                    <!-- Select All -->
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px 8px;">
-                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text);">
-                            <input type="checkbox" id="selectAll" style="width: 17px; height: 17px; accent-color: var(--green); cursor: pointer;" />
-                            Select all items
-                        </label>
-                        <span id="selectedCount" style="font-size: 13px; color: var(--text-tertiary);">0 of @items.Count selected</span>
-                    </div>
+                    var linePrice = (item.Products?.Price ?? 0) * item.Quantity;
+                    <div class="basket-item" id="item-@item.BasketProductsId"
+                         data-price="@item.Products?.Price.ToString("F2")"
+                         data-id="@item.BasketProductsId">
 
-                    @foreach (var item in items)
-                    {
-                        <div class="basket-item animate-fade-up" id="item-@item.BasketProductsId">
-                            <!-- Checkout checkbox -->
+                        <label class="item-checkbox-wrap">
                             <input type="checkbox"
+                                   class="custom-checkbox item-checkbox"
                                    name="selectedProductIds"
                                    value="@item.BasketProductsId"
-                                   class="basket-checkbox"
-                                   style="width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; flex-shrink: 0;" />
+                                   checked />
+                        </label>
 
-                            <!-- Image -->
-                            <div class="basket-item-image" style="display: flex; align-items: center; justify-content: center; background: var(--bg-deep);">
-                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="var(--text-tertiary)" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                                </svg>
-                            </div>
+                        <div class="item-image">
+                            @if (!string.IsNullOrEmpty(item.Products?.Image))
+                            {
+                                <img src="@item.Products.Image" alt="@item.Products.ProductName" />
+                            }
+                            else
+                            {
+                                <span class="img-placeholder">Image</span>
+                            }
+                        </div>
 
-                            <!-- Details -->
-                            <div class="basket-item-details">
-                                <div class="basket-item-name">@item.Products?.ProductName</div>
-                                <div class="basket-item-producer" style="margin-bottom: 8px;">
-                                    @item.Products?.Producers?.BusinessName
-                                </div>
-                                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                    @if (item.Products?.IsAvailable == true)
-                                    {
-                                        <span class="badge badge-success">In Stock</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-error">Out of Stock</span>
-                                    }
-                                </div>
-                            </div>
-
-                            <!-- Price + Qty + Delete -->
-                            <div class="basket-item-right">
-                                <div class="basket-item-price">£@((item.Products?.Price ?? 0 * item.Quantity).ToString("0.00"))</div>
-
-                                <div class="qty-controls">
-                                    <form asp-action="UpdateQuantity" asp-controller="Baskets" method="post" style="display:contents;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="basketProductId" value="@item.BasketProductsId" />
-                                        <button type="submit" name="quantity" value="@(item.Quantity - 1)" class="qty-btn">−</button>
-                                        <span class="qty-value">@item.Quantity</span>
-                                        <button type="submit" name="quantity" value="@(item.Quantity + 1)" class="qty-btn">+</button>
-                                    </form>
-                                </div>
-
-                                <form asp-action="RemoveProduct" asp-controller="Baskets" method="post">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="basketProductId" value="@item.BasketProductsId" />
-                                    <button type="submit" class="delete-btn" title="Remove item">
-                                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                        </svg>
-                                    </button>
-                                </form>
+                        <div class="item-details">
+                            <p class="item-name">@item.Products?.ProductName</p>
+                            <p class="item-producer">@item.Products?.Producers?.BusinessName</p>
+                            <div class="item-tags">
+                                @if (!string.IsNullOrEmpty(item.Products?.category))
+                                {
+                                    <span class="tag">@item.Products.category</span>
+                                }
                             </div>
                         </div>
-                    }
 
-                    <!-- Unselected notice -->
-                    <div id="unselectedNotice" class="alert alert-warning" style="display: none;">
-                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                        </svg>
-                        Unselected items will stay in your basket after checkout.
+                        <div class="item-right">
+                            <p class="item-price" id="price-@item.BasketProductsId">£@linePrice.ToString("F2")</p>
+                            <div class="qty-control">
+                                <button class="qty-btn" onclick="updateQty(@item.BasketProductsId, @(item.Quantity - 1))">−</button>
+                                <span class="qty-value" id="qty-@item.BasketProductsId">@item.Quantity</span>
+                                <button class="qty-btn" onclick="updateQty(@item.BasketProductsId, @(item.Quantity + 1))">+</button>
+                                <button class="qty-btn remove-btn" onclick="removeItem(@item.BasketProductsId)">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unselected warning (hidden by default, shown via JS) -->
+                    <div class="unselected-warning" id="warning-@item.BasketProductsId" style="display:none;">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span class="item-name-warn">@item.Products?.ProductName</span> is not selected and will stay in your basket after checkout.
                     </div>
                 }
             </div>
+        }
+    </div>
 
-            <!-- Order Summary -->
-            <div class="panel panel-body" style="position: sticky; top: 24px;">
-                <h3 style="font-size: 18px; margin-bottom: 20px;">Order Summary</h3>
+    <!-- ── Right: Order Summary ── -->
+    @if (items.Any())
+    {
+        <aside class="order-summary">
+            <h2 class="summary-heading">Order Summary</h2>
 
-                <div style="display: flex; align-items: flex-start; gap: 8px; padding: 12px 14px; background: var(--blue-light); border: 1px solid rgba(59,130,246,0.2); border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 13px; color: var(--blue);">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:1px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                    </svg>
-                    Delivery or pickup will be selected during checkout.
+            <p class="summary-info">
+                <i class="bi bi-info-circle"></i>
+                Delivery or pickup will be selected during checkout.
+            </p>
+
+            <div class="summary-lines">
+                <div class="summary-line">
+                    <span id="subtotalLabel">Subtotal (@items.Count items)</span>
+                    <span id="subtotalValue">£0.00</span>
                 </div>
-
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                        <span style="color: var(--text-secondary);">Subtotal (@items.Count items)</span>
-                        <span style="font-weight: 600;">£@subtotal.ToString("0.00")</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 14px;">
-                        <span style="color: var(--text-secondary);">Delivery</span>
-                        <span style="color: var(--text-tertiary);">Calculated at checkout</span>
-                    </div>
+                <div class="summary-line">
+                    <span>Delivery</span>
+                    <span class="muted">Calculated at checkout</span>
                 </div>
-
-                <!-- Discount Code -->
-                <div style="margin-bottom: 20px;">
-                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-tertiary); margin-bottom: 8px; font-family: 'Outfit', sans-serif;">Discount Code</div>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" name="discountCode" placeholder="Enter discount code"
-                               class="form-input" style="flex: 1; font-size: 13px;" />
-                        <button type="submit" class="btn btn-outline btn-sm">Apply</button>
-                    </div>
-                </div>
-
-                <div class="divider"></div>
-
-                <!-- Delivery toggle -->
-                <div style="margin-bottom: 20px;">
-                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-tertiary); margin-bottom: 10px; font-family: 'Outfit', sans-serif;">Fulfilment</div>
-                    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                        <label style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; border: 1.5px solid var(--glass-border); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s;" id="deliveryLabel">
-                            <input type="radio" name="isDelivery" value="true" id="deliveryOption" style="accent-color: var(--green);" />
-                            Delivery
-                        </label>
-                        <label style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; border: 1.5px solid var(--glass-border); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s;" id="pickupLabel">
-                            <input type="radio" name="isDelivery" value="false" id="pickupOption" style="accent-color: var(--green);" checked />
-                            Collection
-                        </label>
-                    </div>
-                    <div id="addressField" style="display: none;">
-                        <input type="text" name="deliveryAddress" placeholder="Enter delivery address"
-                               class="form-input" style="font-size: 13px;" />
-                    </div>
-                </div>
-
-                <div class="divider"></div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <span style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800;">Total</span>
-                    <span style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800;">£@subtotal.ToString("0.00")</span>
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-full" style="margin-bottom: 10px; font-size: 16px; padding: 14px;">
-                    Proceed to Checkout
-                </button>
-                <a asp-action="Index" asp-controller="Products" class="btn btn-ghost btn-full" style="text-align: center;">
-                    Continue Shopping
-                </a>
             </div>
 
-        </div>
-    </form>
+            <!-- Discount applied indicator -->
+            <div id="discountApplied" class="discount-applied" style="display:none;">
+                <span id="discountAppliedText"></span>
+            </div>
+
+            <div class="summary-line discount-line" id="discountLine" style="display:none;">
+                <span id="discountLabel">Discount</span>
+                <span id="discountValue" class="discount-amount"></span>
+            </div>
+
+            <div class="summary-total">
+                <span>Total</span>
+                <span id="totalValue">£0.00</span>
+            </div>
+
+            <!-- Checkout form -->
+            <form asp-action="Checkout" asp-controller="Baskets" method="post" id="checkoutForm">
+                @Html.AntiForgeryToken()
+                <div id="hiddenCheckboxes"></div>
+                <input type="hidden" name="isDelivery" value="false" />
+                <input type="hidden" name="deliveryAddress" value="" />
+                <input type="hidden" name="discountCode" id="appliedCodeInput" value="" />
+
+                <button type="submit" class="btn-checkout" id="checkoutBtn" disabled>
+                    Proceed to Checkout
+                </button>
+            </form>
+
+            <a asp-controller="Products" asp-action="Index" class="btn-continue">
+                Continue Shopping
+            </a>
+
+            <!-- Discount code -->
+            <div class="discount-section">
+                <p class="discount-label">HAVE A CODE?</p>
+                <div class="discount-input-row">
+                    <input type="text" id="discountCodeInput" class="form-input" placeholder="Enter discount code" />
+                    <button class="btn-apply" onclick="applyDiscount()">Apply</button>
+                </div>
+                <p id="discountMsg" class="discount-msg"></p>
+            </div>
+        </aside>
+    }
 </div>
 
-<script>
-    const checkboxes = document.querySelectorAll('.basket-checkbox');
-    const selectAll = document.getElementById('selectAll');
-    const countLabel = document.getElementById('selectedCount');
-    const notice = document.getElementById('unselectedNotice');
-    const total = @items.Count;
+@section Scripts {
+    <script>
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        let appliedDiscount = 0;
+        let appliedCode = '';
 
-    function updateUI() {
-        const checked = document.querySelectorAll('.basket-checkbox:checked').length;
-        if (countLabel) countLabel.textContent = checked + ' of ' + total + ' selected';
-        if (selectAll) selectAll.checked = checked === total;
-        if (notice) notice.style.display = (checked > 0 && checked < total) ? 'flex' : 'none';
-    }
+        // ── Init ──────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSummary();
+            updateSelectAll();
 
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', function () {
-            const item = this.closest('.basket-item');
-            item.style.borderColor = this.checked ? 'var(--green)' : '';
-            item.style.boxShadow = this.checked
-                ? '0 0 0 1px var(--green), 0 4px 20px rgba(0,0,0,0.07), 0 0 20px var(--green-glow)'
-                : '';
-            updateUI();
-        });
-    });
-
-    if (selectAll) {
-        selectAll.addEventListener('change', function () {
-            checkboxes.forEach(cb => {
-                cb.checked = this.checked;
-                const item = cb.closest('.basket-item');
-                item.style.borderColor = this.checked ? 'var(--green)' : '';
-                item.style.boxShadow = this.checked
-                    ? '0 0 0 1px var(--green), 0 4px 20px rgba(0,0,0,0.07), 0 0 20px var(--green-glow)'
-                    : '';
+            document.getElementById('selectAll')?.addEventListener('change', function () {
+                document.querySelectorAll('.item-checkbox').forEach(cb => {
+                    cb.checked = this.checked;
+                    toggleItemHighlight(cb);
+                });
+                updateSummary();
+                updateWarnings();
+                updateSelectedCount();
             });
-            updateUI();
+
+            document.querySelectorAll('.item-checkbox').forEach(cb => {
+                cb.addEventListener('change', function () {
+                    toggleItemHighlight(this);
+                    updateSummary();
+                    updateWarnings();
+                    updateSelectedCount();
+                    updateSelectAll();
+                });
+            });
         });
-    }
 
-    // Delivery address toggle
-    const deliveryOpt = document.getElementById('deliveryOption');
-    const pickupOpt = document.getElementById('pickupOption');
-    const addressField = document.getElementById('addressField');
+        // ── Highlight checked items ───────────────────
+        function toggleItemHighlight(cb) {
+            const itemEl = cb.closest('.basket-item');
+            if (itemEl) itemEl.classList.toggle('item-selected', cb.checked);
+        }
 
-    function toggleAddress() {
-        addressField.style.display = deliveryOpt.checked ? 'block' : 'none';
-    }
+        // ── Unselected warnings ───────────────────────
+        function updateWarnings() {
+            document.querySelectorAll('.item-checkbox').forEach(cb => {
+                const id = cb.value;
+                const warning = document.getElementById('warning-' + id);
+                if (warning) warning.style.display = (!cb.checked) ? 'flex' : 'none';
+            });
+        }
 
-    deliveryOpt.addEventListener('change', toggleAddress);
-    pickupOpt.addEventListener('change', toggleAddress);
-</script>
+        // ── Select all sync ───────────────────────────
+        function updateSelectAll() {
+            const all = document.querySelectorAll('.item-checkbox');
+            const checked = document.querySelectorAll('.item-checkbox:checked');
+            const selectAll = document.getElementById('selectAll');
+            if (selectAll) {
+                selectAll.checked = all.length > 0 && checked.length === all.length;
+                selectAll.indeterminate = checked.length > 0 && checked.length < all.length;
+            }
+        }
+
+        function updateSelectedCount() {
+            const total = document.querySelectorAll('.item-checkbox').length;
+            const checked = document.querySelectorAll('.item-checkbox:checked').length;
+            const el = document.getElementById('selectedCount');
+            if (el) el.textContent = `${checked} of ${total} selected`;
+        }
+
+        // ── Summary calc ──────────────────────────────
+        function updateSummary() {
+            let subtotal = 0;
+            let selectedCount = 0;
+
+            document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+                const item = document.getElementById('item-' + cb.value);
+                if (!item) return;
+                const unitPrice = parseFloat(item.dataset.price);
+                const qty = parseInt(document.getElementById('qty-' + cb.value)?.textContent ?? '1');
+                subtotal += unitPrice * qty;
+                selectedCount++;
+            });
+
+            document.getElementById('subtotalLabel').textContent = `Subtotal (${selectedCount} item${selectedCount !== 1 ? 's' : ''})`;
+            document.getElementById('subtotalValue').textContent = '£' + subtotal.toFixed(2);
+
+            let total = subtotal;
+            if (appliedDiscount > 0) {
+                const discountAmt = subtotal * (appliedDiscount / 100);
+                total = subtotal - discountAmt;
+                document.getElementById('discountLabel').textContent = `Discount (${appliedDiscount}%)`;
+                document.getElementById('discountValue').textContent = '-£' + discountAmt.toFixed(2);
+                document.getElementById('discountLine').style.display = 'flex';
+            } else {
+                document.getElementById('discountLine').style.display = 'none';
+            }
+
+            document.getElementById('totalValue').textContent = '£' + total.toFixed(2);
+
+            // Update hidden checkboxes for form POST
+            const hidden = document.getElementById('hiddenCheckboxes');
+            hidden.innerHTML = '';
+            document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'selectedProductIds';
+                input.value = cb.value;
+                hidden.appendChild(input);
+            });
+
+            const btn = document.getElementById('checkoutBtn');
+            if (btn) btn.disabled = selectedCount === 0;
+        }
+
+        // ── Update quantity ───────────────────────────
+        async function updateQty(basketProductId, newQty) {
+            if (newQty < 0) return;
+            if (newQty === 0) {
+                await removeItem(basketProductId);
+                return;
+            }
+
+            const res = await fetch('/Baskets/UpdateQuantity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': token
+                },
+                body: `basketProductId=${basketProductId}&quantity=${newQty}`
+            });
+
+            if (res.ok) {
+                const qtyEl = document.getElementById('qty-' + basketProductId);
+                const item = document.getElementById('item-' + basketProductId);
+                const unitPrice = parseFloat(item.dataset.price);
+
+                qtyEl.textContent = newQty;
+
+                // Update the +/- button onclick values
+                const btns = item.querySelectorAll('.qty-btn');
+                btns[0].setAttribute('onclick', `updateQty(${basketProductId}, ${newQty - 1})`);
+                btns[1].setAttribute('onclick', `updateQty(${basketProductId}, ${newQty + 1})`);
+
+                // Update line price
+                document.getElementById('price-' + basketProductId).textContent = '£' + (unitPrice * newQty).toFixed(2);
+
+                updateSummary();
+            }
+        }
+
+        // ── Remove item ───────────────────────────────
+        async function removeItem(basketProductId) {
+            const res = await fetch('/Baskets/RemoveProduct', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': token
+                },
+                body: `basketProductId=${basketProductId}`
+            });
+
+            if (res.ok) {
+                document.getElementById('item-' + basketProductId)?.remove();
+                document.getElementById('warning-' + basketProductId)?.remove();
+
+                // If basket now empty, reload to show empty state
+                if (document.querySelectorAll('.basket-item').length === 0) {
+                    location.reload();
+                    return;
+                }
+
+                updateSummary();
+                updateSelectAll();
+                updateSelectedCount();
+            }
+        }
+
+        // ── Discount code ─────────────────────────────
+        async function applyDiscount() {
+            const code = document.getElementById('discountCodeInput').value.trim();
+            const msg = document.getElementById('discountMsg');
+
+            if (!code) {
+                msg.textContent = 'Please enter a code.';
+                msg.className = 'discount-msg error';
+                return;
+            }
+
+            const res = await fetch(`/Baskets/ValidateDiscount?code=${encodeURIComponent(code)}`);
+            const data = await res.json();
+
+            if (data.valid) {
+                appliedDiscount = data.percentage;
+                appliedCode = data.code;
+                document.getElementById('appliedCodeInput').value = appliedCode;
+
+                const appliedDiv = document.getElementById('discountApplied');
+                document.getElementById('discountAppliedText').textContent = `✓ ${data.code} applied — ${data.percentage}% off`;
+                appliedDiv.style.display = 'block';
+
+                msg.textContent = '';
+                updateSummary();
+            } else {
+                appliedDiscount = 0;
+                appliedCode = '';
+                document.getElementById('appliedCodeInput').value = '';
+                document.getElementById('discountApplied').style.display = 'none';
+
+                msg.textContent = data.message;
+                msg.className = 'discount-msg error';
+                updateSummary();
+            }
+        }
+
+        // Trigger on Enter in discount input
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('discountCodeInput')?.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); applyDiscount(); }
+            });
+        });
+    </script>
+}

@@ -1,8 +1,180 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model GreenField.Models.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- ── Hero ── -->
+<section class="hero-section">
+    <div class="hero-inner">
+        <span class="hero-pill">Now serving Gloucestershire &amp; surrounds</span>
+        <h1 class="hero-title">Fresh <span class="hero-title-accent">Local</span> Food<br />Delivered to You</h1>
+        <p class="hero-subtitle">Support local farmers and enjoy the freshest produce, dairy, and artisan goods straight from your community.</p>
+        <div class="hero-actions">
+            <a asp-controller="Products" asp-action="Index" class="btn-primary">Shop Now</a>
+            <a asp-controller="Producers" asp-action="Index" class="btn-ghost">Meet Our Producers</a>
+        </div>
+    </div>
+
+    <div class="hero-stats">
+        <div class="hero-stat">
+            <p class="hero-stat-num">@Model.TotalProducers+</p>
+            <p class="hero-stat-lbl">Local Producers</p>
+        </div>
+        <div class="hero-stat">
+            <p class="hero-stat-num">@Model.TotalProducts+</p>
+            <p class="hero-stat-lbl">Fresh Products</p>
+        </div>
+        <div class="hero-stat">
+            <p class="hero-stat-num">1,400+</p>
+            <p class="hero-stat-lbl">Happy Customers</p>
+        </div>
+        <div class="hero-stat">
+            <p class="hero-stat-num">15mi</p>
+            <p class="hero-stat-lbl">Average Distance</p>
+        </div>
+    </div>
+</section>
+
+<!-- ── Featured Products ── -->
+<section class="home-section">
+    <div class="home-section-header">
+        <h2 class="section-title">Featured Products</h2>
+        <a asp-controller="Products" asp-action="Index" class="section-link">View all products →</a>
+    </div>
+    <div class="product-grid product-grid-4">
+        @foreach (var product in Model.FeaturedProducts)
+        {
+            <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductsId" class="product-card">
+                <div class="product-card-image">
+                    @if (!string.IsNullOrEmpty(product.Image))
+                    {
+                        <img src="@product.Image" alt="@product.ProductName" />
+                    }
+                    else
+                    {
+                        <span class="img-placeholder">Product Image</span>
+                    }
+                </div>
+                <div class="product-card-body">
+                    <p class="product-card-name">@product.ProductName</p>
+                    <p class="product-card-producer">@product.Producers?.BusinessName</p>
+                    <div class="product-card-footer">
+                        <span class="product-card-price">£@product.Price.ToString("F2")</span>
+                        <span class="product-card-category">@product.category</span>
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+</section>
+
+<!-- ── Local Producers ── -->
+<section class="home-section">
+    <div class="home-section-header">
+        <h2 class="section-title">Local Producers</h2>
+        <a asp-controller="Producers" asp-action="Index" class="section-link">Meet all producers →</a>
+    </div>
+    <div class="producers-grid-3">
+        @foreach (var producer in Model.FeaturedProducers)
+        {
+            <div class="producer-card">
+                <div class="producer-card-image">
+                    @if (!string.IsNullOrEmpty(producer.Logo))
+                    {
+                        <img src="@producer.Logo" alt="@producer.BusinessName" />
+                    }
+                    else
+                    {
+                        <span class="img-placeholder">Producer Image</span>
+                    }
+                </div>
+                <div class="producer-card-body">
+                    <div class="producer-card-top">
+                        <h3 class="producer-name">@producer.BusinessName</h3>
+                        @if (!string.IsNullOrEmpty(producer.BusinessBasedIn))
+                        {
+                            <p class="producer-location">
+                                <i class="bi bi-geo-alt-fill"></i> @producer.BusinessBasedIn
+                            </p>
+                        }
+                        <p class="producer-desc">@producer.BusinessDescription</p>
+                    </div>
+                    <div class="producer-card-footer">
+                        <p class="producer-product-count">@(producer.Products?.Count(p => p.IsAvailable) ?? 0) products available</p>
+                        <a asp-controller="Products" asp-action="Index" asp-route-producerId="@producer.ProducersId" class="btn-outline">
+                            View Products
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ── How It Works ── -->
+<section class="home-section">
+    <h2 class="section-title">How It Works</h2>
+    <div class="how-grid">
+        <div class="how-card">
+            <span class="how-num">1</span>
+            <h3 class="how-title">Browse Local Producers</h3>
+            <p class="how-body">Discover farms, bakeries, and artisan food makers in your area. Read their story and see their products.</p>
+        </div>
+        <div class="how-card">
+            <span class="how-num">2</span>
+            <h3 class="how-title">Add to Your Basket</h3>
+            <p class="how-body">Add products from multiple producers in one basket. Select exactly what you want at checkout.</p>
+        </div>
+        <div class="how-card">
+            <span class="how-num">3</span>
+            <h3 class="how-title">Deliver or Pick Up</h3>
+            <p class="how-body">Choose home delivery or collect from the store. Fresh food from your community, your way.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ── Quality Stamps ── -->
+<section class="home-section stamps-section">
+    <h2 class="section-title">Our Quality Stamps</h2>
+    <p class="stamps-subtitle">Every product is verified by our team. Look for these stamps to find food that meets your values.</p>
+    <div class="stamps-list">
+        <span class="stamp-item"><i class="bi bi-circle-fill"></i> Organic</span>
+        <span class="stamp-item"><i class="bi bi-circle-fill"></i> Free Range</span>
+        <span class="stamp-item"><i class="bi bi-circle-fill"></i> Vegan</span>
+        <span class="stamp-item"><i class="bi bi-circle-fill"></i> Locally Sourced</span>
+        <span class="stamp-item"><i class="bi bi-circle-fill"></i> Pesticide Free</span>
+        <span class="stamp-item"><i class="bi bi-circle-fill"></i> Seasonal</span>
+        <span class="stamp-item"><i class="bi bi-circle-fill"></i> Gluten Free</span>
+        <span class="stamp-item"><i class="bi bi-circle-fill"></i> Grass Fed</span>
+    </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <p class="footer-logo">GLH</p>
+            <p class="footer-tagline">Connecting communities with independent local food producers across Gloucestershire and the surrounding regions.</p>
+        </div>
+        <div class="footer-col">
+            <p class="footer-col-heading">Shop</p>
+            <a asp-controller="Products" asp-action="Index">All Products</a>
+            <a asp-controller="Products" asp-action="Index">Featured</a>
+            <a asp-controller="Products" asp-action="Index">New Arrivals</a>
+            <a asp-controller="Products" asp-action="Index">Deals</a>
+        </div>
+        <div class="footer-col">
+            <p class="footer-col-heading">Producers</p>
+            <a asp-controller="Producers" asp-action="Index">All Producers</a>
+            <a asp-controller="Producers" asp-action="Index">Join as Producer</a>
+            <a asp-area="Identity" asp-page="/Account/Login">Producer Login</a>
+        </div>
+        <div class="footer-col">
+            <p class="footer-col-heading">Help</p>
+            <a asp-controller="Home" asp-action="Privacy">About GLH</a>
+            <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+            <a>#</a>
+            <a>#</a>
+        </div>
+    </div>
+</footer>

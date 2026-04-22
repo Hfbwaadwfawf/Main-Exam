@@ -19,6 +19,19 @@ namespace GreenField.Controllers
             _userManager = userManager;
         }
 
+        private async Task SetBasketCount()
+        {
+            var userId = _userManager.GetUserId(User);
+            if (userId != null)
+            {
+                var count = await _context.BasketProducts
+                    .Include(bp => bp.Basket)
+                    .Where(bp => bp.Basket.UserId == userId)
+                    .SumAsync(bp => bp.Quantity);
+                ViewData["BasketCount"] = count;
+            }
+        }
+
         // GET: Baskets
         public async Task<IActionResult> Index()
         {
@@ -37,7 +50,24 @@ namespace GreenField.Controllers
                 await _context.SaveChangesAsync();
             }
 
+            await SetBasketCount();
             return View(basket);
+        }
+
+        // GET: Baskets/ValidateDiscount?code=XXX
+        [HttpGet]
+        public async Task<IActionResult> ValidateDiscount(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+                return Json(new { valid = false, message = "Enter a code." });
+
+            var discount = await _context.DiscountCodes
+                .FirstOrDefaultAsync(d => d.Code == code.Trim().ToUpper() && d.IsActive);
+
+            if (discount == null)
+                return Json(new { valid = false, message = "Invalid or inactive code." });
+
+            return Json(new { valid = true, percentage = discount.Percentage, code = discount.Code });
         }
 
         // POST: Baskets/AddProduct
@@ -106,7 +136,7 @@ namespace GreenField.Controllers
                 basketProduct.Quantity = quantity;
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
 
         // POST: Baskets/RemoveProduct
@@ -124,7 +154,7 @@ namespace GreenField.Controllers
 
             _context.BasketProducts.Remove(basketProduct);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
 
         // POST: Baskets/Checkout
@@ -161,7 +191,6 @@ namespace GreenField.Controllers
                 .Where(bp => selectedProductIds.Contains(bp.BasketProductsId))
                 .ToList();
 
-            // Validate stock server-side
             foreach (var item in selectedItems)
             {
                 if (item.Products == null || !item.Products.IsAvailable || item.Products.Stock < item.Quantity)
@@ -175,7 +204,6 @@ namespace GreenField.Controllers
             decimal deliveryFee = isDelivery ? 3.99m : 0m;
             decimal total = subtotal + deliveryFee;
 
-            // Apply discount code
             DiscountCodes? appliedCode = null;
             bool usedDiscount = false;
             string? discountName = null;
@@ -196,7 +224,6 @@ namespace GreenField.Controllers
                 discountName = appliedCode.Code;
             }
 
-            // Create order
             var order = new Orders
             {
                 UserId = userId,
@@ -214,7 +241,6 @@ namespace GreenField.Controllers
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            // Create order products and reduce stock
             foreach (var item in selectedItems)
             {
                 _context.OrderProducts.Add(new OrderProducts
@@ -229,11 +255,9 @@ namespace GreenField.Controllers
                     item.Products.IsAvailable = false;
             }
 
-            // Remove checked out items from basket
             _context.BasketProducts.RemoveRange(selectedItems);
             await _context.SaveChangesAsync();
 
-            // Award loyalty points (10 per £1)
             var loyaltyRecord = await _context.LoyaltyPoints
                 .FirstOrDefaultAsync(lp => lp.UserId == userId);
 

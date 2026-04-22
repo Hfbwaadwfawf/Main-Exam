@@ -19,8 +19,8 @@ namespace GreenField.Controllers
             _userManager = userManager;
         }
 
-        // GET: Products — public, with filtering
-        public async Task<IActionResult> Index(string? search, int? producerId, string? stamp, decimal? minPrice, decimal? maxPrice)
+        // GET: Products
+        public async Task<IActionResult> Index(string? search, int? producerId, string? category, decimal? minPrice, decimal? maxPrice)
         {
             var query = _context.Products
                 .Include(p => p.Producers)
@@ -33,6 +33,9 @@ namespace GreenField.Controllers
             if (producerId.HasValue)
                 query = query.Where(p => p.ProducersId == producerId);
 
+            if (!string.IsNullOrWhiteSpace(category))
+                query = query.Where(p => p.category == category);
+
             if (minPrice.HasValue)
                 query = query.Where(p => p.Price >= minPrice);
 
@@ -40,11 +43,16 @@ namespace GreenField.Controllers
                 query = query.Where(p => p.Price <= maxPrice);
 
             ViewData["Producers"] = new SelectList(await _context.Producers.ToListAsync(), "ProducersId", "BusinessName");
+            ViewData["CurrentSearch"] = search;
+            ViewData["CurrentProducer"] = producerId?.ToString();
+            ViewData["CurrentCategory"] = category;
+            ViewData["CurrentMinPrice"] = minPrice?.ToString();
+            ViewData["CurrentMaxPrice"] = maxPrice?.ToString();
 
             return View(await query.ToListAsync());
         }
 
-        // GET: Products/Details/5 — public
+        // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -57,7 +65,7 @@ namespace GreenField.Controllers
             return View(product);
         }
 
-        // GET: Products/Create — Admin or Producer only
+        // GET: Products/Create
         [Authorize(Roles = "Admin,Producer")]
         public async Task<IActionResult> Create()
         {
@@ -87,7 +95,7 @@ namespace GreenField.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Producer")]
-        public async Task<IActionResult> Create([Bind("ProducersId,ProductName,Description,Category,Price,Stock,IsAvailable,ImagePath")] Products products)
+        public async Task<IActionResult> Create([Bind("ProducersId,ProductName,Description,category,Price,Stock,IsAvailable,Image")] Products products)
         {
             var userId = _userManager.GetUserId(User);
 
@@ -141,7 +149,7 @@ namespace GreenField.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Producer")]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductsId,ProducersId,ProductName,Description,category,Price,Stock,IsAvailable,ImagePath")] Products products)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductsId,ProducersId,ProductName,Description,category,Price,Stock,IsAvailable,Image")] Products products)
         {
             if (id != products.ProductsId) return NotFound();
 

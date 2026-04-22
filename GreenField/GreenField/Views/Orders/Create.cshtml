@@ -1,35 +1,35 @@
-﻿@model GreenField.Models.Orders
+@model GreenField.Models.Orders
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1 class="page-title">Create</h1>
 
 <h4>Orders</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div style="display:flex;flex-direction:column;gap:.75rem;max-width:520px;">
+    <div style="max-width:520px;">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
+                <input asp-for="UserId" class="form-input" />
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="OrderDate" class="control-label"></label>
-                <input asp-for="OrderDate" class="form-control" />
+                <input asp-for="OrderDate" class="form-input" />
                 <span asp-validation-for="OrderDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TotalPrice" class="control-label"></label>
-                <input asp-for="TotalPrice" class="form-control" />
+                <input asp-for="TotalPrice" class="form-input" />
                 <span asp-validation-for="TotalPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
+                <select asp-for="Status" class="form-input"></select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
@@ -39,17 +39,17 @@
             </div>
             <div class="form-group">
                 <label asp-for="DeliveryAddress" class="control-label"></label>
-                <input asp-for="DeliveryAddress" class="form-control" />
+                <input asp-for="DeliveryAddress" class="form-input" />
                 <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DeliveryFee" class="control-label"></label>
-                <input asp-for="DeliveryFee" class="form-control" />
+                <input asp-for="DeliveryFee" class="form-input" />
                 <span asp-validation-for="DeliveryFee" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CollectionDate" class="control-label"></label>
-                <input asp-for="CollectionDate" class="form-control" />
+                <input asp-for="CollectionDate" class="form-input" />
                 <span asp-validation-for="CollectionDate" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
@@ -59,7 +59,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="DiscountName" class="control-label"></label>
-                <input asp-for="DiscountName" class="form-control" />
+                <input asp-for="DiscountName" class="form-input" />
                 <span asp-validation-for="DiscountName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -67,7 +67,7 @@
                 <select asp-for="DiscountCodeId" class ="form-control" asp-items="ViewBag.DiscountCodeId"></select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn-primary" />
             </div>
         </form>
     </div>
