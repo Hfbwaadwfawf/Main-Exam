@@ -1,0 +1,379 @@
+@model GreenField.Models.Basket
+@{
+    ViewData["Title"] = "Your Basket";
+    var items = Model.BasketProducts?.ToList() ?? new List<GreenField.Models.BasketProducts>();
+}
+
+<div class="basket-layout">
+
+    <!-- ── Left: Item List ── -->
+    <div class="basket-main">
+        <h1 class="basket-title">Your Basket</h1>
+        <p class="basket-subtitle">Tick the items you'd like to checkout. Unticked items stay in your basket.</p>
+
+        @if (!items.Any())
+        {
+            <div class="basket-empty">
+                <i class="bi bi-basket3"></i>
+                <p>Your basket is empty.</p>
+                <a asp-controller="Products" asp-action="Index" class="btn-primary">Browse Products</a>
+            </div>
+        }
+        else
+        {
+            <!-- Select all bar -->
+            <div class="select-all-bar">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="selectAll" class="custom-checkbox" />
+                    <span>Select all items</span>
+                </label>
+                <span class="selected-count" id="selectedCount">0 of @items.Count selected</span>
+            </div>
+
+            <!-- Items -->
+            <div class="basket-items" id="basketItems">
+                @foreach (var item in items)
+                {
+                    var linePrice = (item.Products?.Price ?? 0) * item.Quantity;
+                    <div class="basket-item" id="item-@item.BasketProductsId"
+                         data-price="@item.Products?.Price.ToString("F2")"
+                         data-id="@item.BasketProductsId">
+
+                        <label class="item-checkbox-wrap">
+                            <input type="checkbox"
+                                   class="custom-checkbox item-checkbox"
+                                   name="selectedProductIds"
+                                   value="@item.BasketProductsId"
+                                   checked />
+                        </label>
+
+                        <div class="item-image">
+                            @if (!string.IsNullOrEmpty(item.Products?.Image))
+                            {
+                                <img src="@item.Products.Image" alt="@item.Products.ProductName" />
+                            }
+                            else
+                            {
+                                <span class="img-placeholder">Image</span>
+                            }
+                        </div>
+
+                        <div class="item-details">
+                            <p class="item-name">@item.Products?.ProductName</p>
+                            <p class="item-producer">@item.Products?.Producers?.BusinessName</p>
+                            <div class="item-tags">
+                                @if (!string.IsNullOrEmpty(item.Products?.category))
+                                {
+                                    <span class="tag">@item.Products.category</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="item-right">
+                            <p class="item-price" id="price-@item.BasketProductsId">£@linePrice.ToString("F2")</p>
+                            <div class="qty-control">
+                                <button class="qty-btn" onclick="updateQty(@item.BasketProductsId, @(item.Quantity - 1))">−</button>
+                                <span class="qty-value" id="qty-@item.BasketProductsId">@item.Quantity</span>
+                                <button class="qty-btn" onclick="updateQty(@item.BasketProductsId, @(item.Quantity + 1))">+</button>
+                                <button class="qty-btn remove-btn" onclick="removeItem(@item.BasketProductsId)">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unselected warning (hidden by default, shown via JS) -->
+                    <div class="unselected-warning" id="warning-@item.BasketProductsId" style="display:none;">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span class="item-name-warn">@item.Products?.ProductName</span> is not selected and will stay in your basket after checkout.
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- ── Right: Order Summary ── -->
+    @if (items.Any())
+    {
+        <aside class="order-summary">
+            <h2 class="summary-heading">Order Summary</h2>
+
+            <p class="summary-info">
+                <i class="bi bi-info-circle"></i>
+                Delivery or pickup will be selected during checkout.
+            </p>
+
+            <div class="summary-lines">
+                <div class="summary-line">
+                    <span id="subtotalLabel">Subtotal (@items.Count items)</span>
+                    <span id="subtotalValue">£0.00</span>
+                </div>
+                <div class="summary-line">
+                    <span>Delivery</span>
+                    <span class="muted">Calculated at checkout</span>
+                </div>
+            </div>
+
+            <!-- Discount applied indicator -->
+            <div id="discountApplied" class="discount-applied" style="display:none;">
+                <span id="discountAppliedText"></span>
+            </div>
+
+            <div class="summary-line discount-line" id="discountLine" style="display:none;">
+                <span id="discountLabel">Discount</span>
+                <span id="discountValue" class="discount-amount"></span>
+            </div>
+
+            <div class="summary-total">
+                <span>Total</span>
+                <span id="totalValue">£0.00</span>
+            </div>
+
+            <!-- Checkout form -->
+            <form asp-action="Checkout" asp-controller="Baskets" method="post" id="checkoutForm">
+                @Html.AntiForgeryToken()
+                <div id="hiddenCheckboxes"></div>
+                <input type="hidden" name="isDelivery" value="false" />
+                <input type="hidden" name="deliveryAddress" value="" />
+                <input type="hidden" name="discountCode" id="appliedCodeInput" value="" />
+
+                <button type="submit" class="btn-checkout" id="checkoutBtn" disabled>
+                    Proceed to Checkout
+                </button>
+            </form>
+
+            <a asp-controller="Products" asp-action="Index" class="btn-continue">
+                Continue Shopping
+            </a>
+
+            <!-- Discount code -->
+            <div class="discount-section">
+                <p class="discount-label">HAVE A CODE?</p>
+                <div class="discount-input-row">
+                    <input type="text" id="discountCodeInput" class="form-input" placeholder="Enter discount code" />
+                    <button class="btn-apply" onclick="applyDiscount()">Apply</button>
+                </div>
+                <p id="discountMsg" class="discount-msg"></p>
+            </div>
+        </aside>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        let appliedDiscount = 0;
+        let appliedCode = '';
+
+        // ── Init ──────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSummary();
+            updateSelectAll();
+
+            document.getElementById('selectAll')?.addEventListener('change', function () {
+                document.querySelectorAll('.item-checkbox').forEach(cb => {
+                    cb.checked = this.checked;
+                    toggleItemHighlight(cb);
+                });
+                updateSummary();
+                updateWarnings();
+                updateSelectedCount();
+            });
+
+            document.querySelectorAll('.item-checkbox').forEach(cb => {
+                cb.addEventListener('change', function () {
+                    toggleItemHighlight(this);
+                    updateSummary();
+                    updateWarnings();
+                    updateSelectedCount();
+                    updateSelectAll();
+                });
+            });
+        });
+
+        // ── Highlight checked items ───────────────────
+        function toggleItemHighlight(cb) {
+            const itemEl = cb.closest('.basket-item');
+            if (itemEl) itemEl.classList.toggle('item-selected', cb.checked);
+        }
+
+        // ── Unselected warnings ───────────────────────
+        function updateWarnings() {
+            document.querySelectorAll('.item-checkbox').forEach(cb => {
+                const id = cb.value;
+                const warning = document.getElementById('warning-' + id);
+                if (warning) warning.style.display = (!cb.checked) ? 'flex' : 'none';
+            });
+        }
+
+        // ── Select all sync ───────────────────────────
+        function updateSelectAll() {
+            const all = document.querySelectorAll('.item-checkbox');
+            const checked = document.querySelectorAll('.item-checkbox:checked');
+            const selectAll = document.getElementById('selectAll');
+            if (selectAll) {
+                selectAll.checked = all.length > 0 && checked.length === all.length;
+                selectAll.indeterminate = checked.length > 0 && checked.length < all.length;
+            }
+        }
+
+        function updateSelectedCount() {
+            const total = document.querySelectorAll('.item-checkbox').length;
+            const checked = document.querySelectorAll('.item-checkbox:checked').length;
+            const el = document.getElementById('selectedCount');
+            if (el) el.textContent = `${checked} of ${total} selected`;
+        }
+
+        // ── Summary calc ──────────────────────────────
+        function updateSummary() {
+            let subtotal = 0;
+            let selectedCount = 0;
+
+            document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+                const item = document.getElementById('item-' + cb.value);
+                if (!item) return;
+                const unitPrice = parseFloat(item.dataset.price);
+                const qty = parseInt(document.getElementById('qty-' + cb.value)?.textContent ?? '1');
+                subtotal += unitPrice * qty;
+                selectedCount++;
+            });
+
+            document.getElementById('subtotalLabel').textContent = `Subtotal (${selectedCount} item${selectedCount !== 1 ? 's' : ''})`;
+            document.getElementById('subtotalValue').textContent = '£' + subtotal.toFixed(2);
+
+            let total = subtotal;
+            if (appliedDiscount > 0) {
+                const discountAmt = subtotal * (appliedDiscount / 100);
+                total = subtotal - discountAmt;
+                document.getElementById('discountLabel').textContent = `Discount (${appliedDiscount}%)`;
+                document.getElementById('discountValue').textContent = '-£' + discountAmt.toFixed(2);
+                document.getElementById('discountLine').style.display = 'flex';
+            } else {
+                document.getElementById('discountLine').style.display = 'none';
+            }
+
+            document.getElementById('totalValue').textContent = '£' + total.toFixed(2);
+
+            // Update hidden checkboxes for form POST
+            const hidden = document.getElementById('hiddenCheckboxes');
+            hidden.innerHTML = '';
+            document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'selectedProductIds';
+                input.value = cb.value;
+                hidden.appendChild(input);
+            });
+
+            const btn = document.getElementById('checkoutBtn');
+            if (btn) btn.disabled = selectedCount === 0;
+        }
+
+        // ── Update quantity ───────────────────────────
+        async function updateQty(basketProductId, newQty) {
+            if (newQty < 0) return;
+            if (newQty === 0) {
+                await removeItem(basketProductId);
+                return;
+            }
+
+            const res = await fetch('/Baskets/UpdateQuantity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': token
+                },
+                body: `basketProductId=${basketProductId}&quantity=${newQty}`
+            });
+
+            if (res.ok) {
+                const qtyEl = document.getElementById('qty-' + basketProductId);
+                const item = document.getElementById('item-' + basketProductId);
+                const unitPrice = parseFloat(item.dataset.price);
+
+                qtyEl.textContent = newQty;
+
+                // Update the +/- button onclick values
+                const btns = item.querySelectorAll('.qty-btn');
+                btns[0].setAttribute('onclick', `updateQty(${basketProductId}, ${newQty - 1})`);
+                btns[1].setAttribute('onclick', `updateQty(${basketProductId}, ${newQty + 1})`);
+
+                // Update line price
+                document.getElementById('price-' + basketProductId).textContent = '£' + (unitPrice * newQty).toFixed(2);
+
+                updateSummary();
+            }
+        }
+
+        // ── Remove item ───────────────────────────────
+        async function removeItem(basketProductId) {
+            const res = await fetch('/Baskets/RemoveProduct', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': token
+                },
+                body: `basketProductId=${basketProductId}`
+            });
+
+            if (res.ok) {
+                document.getElementById('item-' + basketProductId)?.remove();
+                document.getElementById('warning-' + basketProductId)?.remove();
+
+                // If basket now empty, reload to show empty state
+                if (document.querySelectorAll('.basket-item').length === 0) {
+                    location.reload();
+                    return;
+                }
+
+                updateSummary();
+                updateSelectAll();
+                updateSelectedCount();
+            }
+        }
+
+        // ── Discount code ─────────────────────────────
+        async function applyDiscount() {
+            const code = document.getElementById('discountCodeInput').value.trim();
+            const msg = document.getElementById('discountMsg');
+
+            if (!code) {
+                msg.textContent = 'Please enter a code.';
+                msg.className = 'discount-msg error';
+                return;
+            }
+
+            const res = await fetch(`/Baskets/ValidateDiscount?code=${encodeURIComponent(code)}`);
+            const data = await res.json();
+
+            if (data.valid) {
+                appliedDiscount = data.percentage;
+                appliedCode = data.code;
+                document.getElementById('appliedCodeInput').value = appliedCode;
+
+                const appliedDiv = document.getElementById('discountApplied');
+                document.getElementById('discountAppliedText').textContent = `✓ ${data.code} applied — ${data.percentage}% off`;
+                appliedDiv.style.display = 'block';
+
+                msg.textContent = '';
+                updateSummary();
+            } else {
+                appliedDiscount = 0;
+                appliedCode = '';
+                document.getElementById('appliedCodeInput').value = '';
+                document.getElementById('discountApplied').style.display = 'none';
+
+                msg.textContent = data.message;
+                msg.className = 'discount-msg error';
+                updateSummary();
+            }
+        }
+
+        // Trigger on Enter in discount input
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('discountCodeInput')?.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); applyDiscount(); }
+            });
+        });
+    </script>
+}

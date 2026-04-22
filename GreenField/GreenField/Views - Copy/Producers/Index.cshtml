@@ -1,0 +1,128 @@
+@model IEnumerable<GreenField.Models.Producers>
+@{
+    ViewData["Title"] = "Our Producers";
+}
+
+<div class="producers-page">
+
+    <!-- Header -->
+    <div class="producers-header">
+        <div class="producers-header-text">
+            <h1 class="page-title">Our Producers</h1>
+            <p class="page-subtitle">Meet the passionate local producers who make GLH possible. Each one is committed to sustainable practices, quality ingredients, and supporting the local food economy.</p>
+        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn-primary">
+                <i class="bi bi-plus-lg"></i> Add Producer
+            </a>
+        }
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <!-- Why We Partner banner -->
+    <div class="partner-banner">
+        <div class="partner-banner-left">
+            <h2 class="partner-title">Why We Partner With Local</h2>
+            <p class="partner-body">Every producer on GLH is hand-selected by our team. We visit each farm and business personally to verify their practices, values, and commitment to quality before they can list on our platform. When you buy through GLH, you know exactly where your food comes from.</p>
+        </div>
+        <div class="partner-stats">
+            <div class="partner-stat">
+                <p class="stat-num">@Model.Count()+</p>
+                <p class="stat-lbl">Verified producers</p>
+            </div>
+            <div class="partner-stat">
+                <p class="stat-num">15mi</p>
+                <p class="stat-lbl">Average distance</p>
+            </div>
+            <div class="partner-stat">
+                <p class="stat-num">@Model.Sum(p => p.Products?.Count ?? 0)+</p>
+                <p class="stat-lbl">Products available</p>
+            </div>
+            <div class="partner-stat">
+                <p class="stat-num">100%</p>
+                <p class="stat-lbl">UK grown or made</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="producers-search-bar">
+        <input type="text" id="producerSearch" class="form-input" placeholder="Search producers..." />
+    </div>
+
+    <!-- Producer grid -->
+    <div class="producers-grid" id="producerGrid">
+        @foreach (var producer in Model)
+        {
+            <div class="producer-card" data-name="@producer.BusinessName.ToLower()" data-location="@producer.BusinessBasedIn?.ToLower()">
+
+                <!-- Image -->
+                <div class="producer-card-image">
+                    @if (!string.IsNullOrEmpty(producer.Logo))
+                    {
+                        <img src="@producer.Logo" alt="@producer.BusinessName" />
+                    }
+                    else
+                    {
+                        <span class="img-placeholder">Producer Image</span>
+                    }
+                </div>
+
+                <!-- Body -->
+                <div class="producer-card-body">
+                    <div class="producer-card-top">
+                        <h3 class="producer-name">@producer.BusinessName</h3>
+                        @if (!string.IsNullOrEmpty(producer.BusinessBasedIn))
+                        {
+                            <p class="producer-location">
+                                <i class="bi bi-geo-alt-fill"></i> @producer.BusinessBasedIn
+                            </p>
+                        }
+                        <p class="producer-desc">@producer.BusinessDescription</p>
+                    </div>
+
+                    <div class="producer-card-footer">
+                        <p class="producer-product-count">@(producer.Products?.Count(p => p.IsAvailable) ?? 0) products available</p>
+                        <div class="producer-actions">
+                            <a asp-controller="Products" asp-action="Index" asp-route-producerId="@producer.ProducersId" class="btn-outline">
+                                View Products
+                            </a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@producer.ProducersId" class="action-link">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@producer.ProducersId" class="action-link danger">Delete</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">No producers found.</p>
+    }
+
+</div>
+
+<script>
+    document.getElementById('producerSearch')?.addEventListener('input', function () {
+        const val = this.value.toLowerCase();
+        document.querySelectorAll('.producer-card').forEach(card => {
+            const name = card.dataset.name ?? '';
+            const loc  = card.dataset.location ?? '';
+            card.style.display = (name.includes(val) || loc.includes(val)) ? '' : 'none';
+        });
+    });
+</script>

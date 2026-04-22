@@ -1,0 +1,119 @@
+@model GreenField.Models.Products
+@{
+    ViewData["Title"] = Model.ProductName;
+}
+
+<div class="product-details-page">
+
+    <div class="product-details-layout">
+
+        <!-- Image -->
+        <div class="product-details-image">
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                <img src="@Model.Image" alt="@Model.ProductName" />
+            }
+            else
+            {
+                <div class="img-placeholder-large">No Image</div>
+            }
+        </div>
+
+        <!-- Info -->
+        <div class="product-details-info">
+
+            <p class="product-details-category">@Model.category</p>
+            <h1 class="product-details-name">@Model.ProductName</h1>
+
+            @if (Model.Producers != null)
+            {
+                <p class="product-details-producer">
+                    <i class="bi bi-shop"></i>
+                    <a asp-controller="Products" asp-action="Index" asp-route-producerId="@Model.Producers.ProducersId">
+                        @Model.Producers.BusinessName
+                    </a>
+                    @if (!string.IsNullOrEmpty(Model.Producers.BusinessBasedIn))
+                    {
+                        <span class="producer-location-inline">&middot; @Model.Producers.BusinessBasedIn</span>
+                    }
+                </p>
+            }
+
+            <p class="product-details-price">£@Model.Price.ToString("F2")</p>
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p class="product-details-desc">@Model.Description</p>
+            }
+
+            <div class="product-details-meta">
+                @if (Model.IsAvailable && Model.Stock > 0)
+                {
+                    <span class="stock-badge in-stock">
+                        <i class="bi bi-check-circle-fill"></i> In stock (@Model.Stock available)
+                    </span>
+                }
+                else
+                {
+                    <span class="stock-badge out-of-stock">
+                        <i class="bi bi-x-circle-fill"></i> Out of stock
+                    </span>
+                }
+            </div>
+
+            @if (Model.IsAvailable && Model.Stock > 0 && User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Baskets" asp-action="AddProduct" method="post" class="add-to-basket-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.ProductsId" />
+                    <div class="qty-row">
+                        <div class="qty-control">
+                            <button type="button" class="qty-btn" onclick="adjustQty(-1)">−</button>
+                            <input type="number" name="quantity" id="qtyInput" value="1" min="1" max="@Model.Stock" class="qty-input" readonly />
+                            <button type="button" class="qty-btn" onclick="adjustQty(1)">+</button>
+                        </div>
+                        <button type="submit" class="btn-primary btn-add-basket">
+                            <i class="bi bi-basket3"></i> Add to Basket
+                        </button>
+                    </div>
+                </form>
+            }
+            else if (User.Identity?.IsAuthenticated == false)
+            {
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn-outline">Log in to purchase</a>
+            }
+
+            <!-- Admin / Producer actions -->
+            @if (User.IsInRole("Admin") || User.IsInRole("Producer"))
+            {
+                <div class="product-details-admin-actions">
+                    <a asp-action="Edit" asp-route-id="@Model.ProductsId" class="action-link">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Delete" asp-route-id="@Model.ProductsId" class="action-link danger">
+                            <i class="bi bi-trash3"></i> Delete
+                        </a>
+                    }
+                </div>
+            }
+
+            <a asp-action="Index" class="back-link">
+                <i class="bi bi-arrow-left"></i> Back to Store
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function adjustQty(delta) {
+        const input = document.getElementById('qtyInput');
+        const max = parseInt(input.max);
+        let val = parseInt(input.value) + delta;
+        val = Math.max(1, Math.min(max, val));
+        input.value = val;
+    }
+</script>
