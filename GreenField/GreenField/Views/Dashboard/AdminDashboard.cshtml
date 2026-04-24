@@ -3,6 +3,7 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
+@Html.AntiForgeryToken()
 <div class="dashboard-wrap">
 
     <div class="dash-header">
@@ -19,6 +20,17 @@
                 }
             </p>
         </div>
+        <div style="display:flex;align-items:center;gap:.75rem;">
+            <a asp-controller="DiscountCodes" asp-action="Index" class="btn-ghost btn-sm">
+                <i class="bi bi-tag-fill"></i> Discount Codes
+            </a>
+            <form asp-area="Identity" asp-page="/Account/Logout" method="post" style="margin:0;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-logout">
+                <i class="bi bi-box-arrow-right"></i> Log Out
+            </button>
+        </form>
+        </div>
     </div>
 
     @if (TempData["Success"] != null)
@@ -30,19 +42,22 @@
         <div class="alert alert-danger">@TempData["Error"]</div>
     }
 
-    <div class="filter-bar">
-        <a asp-action="Index" asp-controller="Dashboard"
-           class="filter-chip @(Model.FilterProducerId == null ? "active" : "")">
-            All Producers
-        </a>
-        @foreach (var p in Model.AllProducers)
-        {
+    <div class="producer-filter-bar">
+        <label class="filter-label"><i class="bi bi-funnel-fill"></i> Filter by Producer</label>
+        <div class="filter-chip-group">
             <a asp-action="Index" asp-controller="Dashboard"
-               asp-route-filterProducerId="@p.ProducersId"
-               class="filter-chip @(Model.FilterProducerId == p.ProducersId ? "active" : "")">
-                @p.BusinessName
+               class="filter-chip @(Model.FilterProducerId == null ? "active" : "")">
+                All Producers
             </a>
-        }
+            @foreach (var p in Model.AllProducers)
+            {
+                <a asp-action="Index" asp-controller="Dashboard"
+                   asp-route-filterProducerId="@p.ProducersId"
+                   class="filter-chip @(Model.FilterProducerId == p.ProducersId ? "active" : "")">
+                    @p.BusinessName
+                </a>
+            }
+        </div>
     </div>
 
     <div class="stat-cards">
@@ -64,16 +79,6 @@
                 <p class="stat-card-label">Orders</p>
                 <p class="stat-card-big">@Model.Orders.Count</p>
                 <p class="stat-card-meta">@Model.Orders.Count(o => o.Status == GreenField.Models.OrderStatus.Pending || o.Status == GreenField.Models.OrderStatus.Processing) active</p>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-card-icon-wrap revenue-icon">
-                <i class="bi bi-currency-pound"></i>
-            </div>
-            <div class="stat-card-body">
-                <p class="stat-card-label">Revenue</p>
-                <p class="stat-card-big">£@Model.Orders.Where(o => o.Status != GreenField.Models.OrderStatus.Cancelled).Sum(o => o.TotalPrice).ToString("F2")</p>
-                <p class="stat-card-meta">All time</p>
             </div>
         </div>
         @if (Model.FilterProducerId == null)
@@ -204,7 +209,7 @@
                         ? order.OrderProducts.Where(op => op.Products?.ProducersId == Model.FilterProducerId).ToList()
                         : order.OrderProducts.ToList();
                         <div class="order-row-block">
-                            <div class="order-row-top">
+                            <div class="order-row-top order-toggle" onclick="toggleOrder('adm-@order.OrdersId')" style="cursor:pointer;">
                                 <div>
                                     <p class="order-id">ORD-@order.OrdersId.ToString("D4")</p>
                                     <p class="order-meta">
@@ -213,9 +218,86 @@
                                     </p>
                                 </div>
                                 <div class="order-row-right">
+                                    <span class="status-badge @statusClass">@order.Status</span>
+                                    <span class="order-price">£@order.TotalPrice.ToString("F2")</span>
+                                    <i class="bi bi-chevron-down order-chevron order-chevron-icon" id="chevron-adm-@order.OrdersId"></i>
+                                </div>
+                            </div>
+
+                            <div class="order-detail-panel" id="adm-@order.OrdersId" style="display:none;">
+                                <table class="table order-detail-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            @if (!Model.FilterProducerId.HasValue)
+                                            {
+                                                <th>Producer</th>
+                                            }
+                                            <th style="text-align:center;">Qty</th>
+                                            <th style="text-align:right;">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var op in relevantItems)
+                                        {
+                                            <tr>
+                                                <td>@op.Products?.ProductName</td>
+                                                @if (!Model.FilterProducerId.HasValue)
+                                                {
+                                                    <td class="text-muted">@(Model.AllProducers.FirstOrDefault(p => p.ProducersId == op.Products?.ProducersId)?.BusinessName ?? "—")</td>
+                                                }
+                                                <td style="text-align:center;">@op.Quantity</td>
+                                                <td style="text-align:right;">£@(((op.Products?.Price ?? 0) * op.Quantity).ToString("F2"))</td>
+                                            </tr>
+                                        }
+                                        @if (order.DeliveryFee > 0)
+                                        {
+                                            <tr>
+                                                <td colspan="@(Model.FilterProducerId.HasValue ? 2 : 3)" class="text-muted">Delivery Fee</td>
+                                                <td style="text-align:right;">£@order.DeliveryFee.ToString("F2")</td>
+                                            </tr>
+                                        }
+                                        @if (order.UsedDiscount && !string.IsNullOrEmpty(order.DiscountName))
+                                        {
+                                            <tr>
+                                                <td colspan="@(Model.FilterProducerId.HasValue ? 2 : 3)" class="text-green">Discount (@order.DiscountName)</td>
+                                                <td style="text-align:right;" class="discount-amount">Applied</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="@(Model.FilterProducerId.HasValue ? 2 : 3)" class="bold">Total</td>
+                                            <td style="text-align:right;" class="bold">£@order.TotalPrice.ToString("F2")</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                                <div class="order-detail-meta">
+                                    @if (order.IsDelivery)
+                                    {
+                                        <p><i class="bi bi-geo-alt-fill"></i> Delivering to: <strong>@order.DeliveryAddress</strong></p>
+                                    }
+                                    else
+                                    {
+                                        <p><i class="bi bi-shop"></i> Click &amp; Collect
+                                            @if (order.CollectionDate.HasValue)
+                                            {
+                                                <span>&mdash; @order.CollectionDate.Value.ToString("d MMM yyyy")</span>
+                                            }
+                                        </p>
+                                    }
+                                    @if (!string.IsNullOrEmpty(order.UserId))
+                                    {
+                                        <p class="text-muted" style="font-size:.8rem;">User ID: @order.UserId</p>
+                                    }
+                                </div>
+
+                                <div class="order-detail-actions">
                                     <form asp-controller="Orders" asp-action="UpdateStatus" method="post" class="status-form">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="orderId" value="@order.OrdersId" />
+                                        <label class="text-muted" style="font-size:.85rem;">Update Status:</label>
                                         <select name="status" class="status-select" onchange="this.form.submit()">
                                             @foreach (GreenField.Models.OrderStatus s in Enum.GetValues(typeof(GreenField.Models.OrderStatus)))
                                             {
@@ -223,16 +305,7 @@
                                             }
                                         </select>
                                     </form>
-                                    <span class="status-badge @statusClass">@order.Status</span>
-                                    <span class="order-price">£@order.TotalPrice.ToString("F2")</span>
-                                    <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.OrdersId" class="action-link">View</a>
                                 </div>
-                            </div>
-                            <div class="order-items-preview">
-                                @foreach (var item in relevantItems)
-                                {
-                                    <span class="item-chip">@item.Products?.ProductName × @item.Quantity</span>
-                                }
                             </div>
                         </div>
                     }
@@ -252,4 +325,12 @@
             document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
         });
     });
-</script>;
+
+    function toggleOrder(id) {
+        const panel = document.getElementById(id);
+        const chevron = document.getElementById('chevron-' + id);
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+    }
+</script>

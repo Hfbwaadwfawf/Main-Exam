@@ -1,47 +1,76 @@
 @model IEnumerable<GreenField.Models.DiscountCodes>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Discount Codes";
 }
 
-<h1 class="page-title">Index</h1>
+<div class="dashboard-wrap">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Code)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Percentage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Percentage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DiscountCodesId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DiscountCodesId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DiscountCodesId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    @* header with add button *@
+    <div class="dash-header">
+        <div>
+            <h1 class="page-title">Discount Codes</h1>
+            <p class="page-subtitle">Manage active and inactive discount codes.</p>
+        </div>
+        <a asp-action="Create" class="btn-primary">
+            <i class="bi bi-plus-lg"></i> New Code
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @* codes table *@
+    <div class="panel-card">
+        @if (!Model.Any())
+        {
+            <p class="empty-state">No discount codes yet.</p>
+        }
+        else
+        {
+            <div class="product-table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Discount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="bold">@item.Code</td>
+                                <td>@item.Percentage%</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="status-badge badge-delivered">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge badge-cancelled">Inactive</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="action-links">
+                                        <a asp-action="Edit" asp-route-id="@item.DiscountCodesId" class="action-link">Edit</a>
+                                        <a asp-action="Delete" asp-route-id="@item.DiscountCodesId" class="action-link danger">Delete</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+</div>

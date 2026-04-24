@@ -1,20 +1,23 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GreenField.Data;
 
 namespace GreenField.Controllers
 {
+    // raw basket product management — admin only, mainly for debugging
     [Authorize(Roles = "Admin")]
     public class BasketProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
+        // inject db context
         public BasketProductsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        // GET — lists every basket product across all users with basket and product details
         public async Task<IActionResult> Index()
         {
             var basketProducts = await _context.BasketProducts
@@ -26,6 +29,7 @@ namespace GreenField.Controllers
             return View(basketProducts);
         }
 
+        // GET — details for a single basket product record
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -39,6 +43,7 @@ namespace GreenField.Controllers
             return View(basketProduct);
         }
 
+        // POST — removes a basket product record, used by admin to clean up if needed
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

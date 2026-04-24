@@ -157,9 +157,13 @@ namespace GreenField.Data
 
             var codes = new List<DiscountCodes>
             {
-                new DiscountCodes { Code = "WELCOME10", Percentage = 10, IsActive = true },
-                new DiscountCodes { Code = "GREENFIELD20", Percentage = 20, IsActive = true },
-                new DiscountCodes { Code = "SUMMER15", Percentage = 15, IsActive = true }
+                // regular promo codes
+                new DiscountCodes { Code = "WELCOME10", Percentage = 10, IsActive = true, PointsRequired = 0 },
+                new DiscountCodes { Code = "GREENFIELD20", Percentage = 20, IsActive = true, PointsRequired = 0 },
+
+                // loyalty reward codes — unlocked by earning points
+                new DiscountCodes { Code = "LOYAL30", Percentage = 30, IsActive = true, PointsRequired = 300 },
+                new DiscountCodes { Code = "LOYAL50", Percentage = 50, IsActive = true, PointsRequired = 600 }
             };
 
             context.DiscountCodes.AddRange(codes);

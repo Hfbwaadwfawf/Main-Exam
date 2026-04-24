@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,13 +12,14 @@ namespace GreenField.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
 
+        // inject db and user manager
         public ProducersController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
 
-        // GET: Producers — public
+        // GET — public producers listing with their products included
         public async Task<IActionResult> Index()
         {
             var producers = await _context.Producers
@@ -28,7 +29,7 @@ namespace GreenField.Controllers
             return View(producers);
         }
 
-        // GET: Producers/Details/5 — public
+        // GET — public producer detail page, only shows available products
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -41,18 +42,23 @@ namespace GreenField.Controllers
             return View(producer);
         }
 
-        // GET: Producers/Create — Admin only
+        // GET — create producer form, admin only
         [Authorize(Roles = "Admin")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // load all users in the Producer role so admin can assign one from a dropdown
+            var producerUsers = await _userManager.GetUsersInRoleAsync("Producer");
+            ViewBag.UserList = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
+                producerUsers.Select(u => new { u.Id, Display = u.Email ?? u.UserName }),
+                "Id", "Display");
             return View();
         }
 
-        // POST: Producers/Create
+        // POST — saves the new producer, admin only
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("UserId,BusinessName,BusinessDescription,BusinessBasedIn,LogoPath")] Producers producers)
+        public async Task<IActionResult> Create([Bind("UserId,BusinessName,BusinessDescription,BusinessBasedIn,Logo")] Producers producers)
         {
             if (ModelState.IsValid)
             {
@@ -61,10 +67,16 @@ namespace GreenField.Controllers
                 TempData["Success"] = "Producer created.";
                 return RedirectToAction(nameof(Index));
             }
+
+            // re-populate the user dropdown if validation failed
+            var producerUsers = await _userManager.GetUsersInRoleAsync("Producer");
+            ViewBag.UserList = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
+                producerUsers.Select(u => new { u.Id, Display = u.Email ?? u.UserName }),
+                "Id", "Display", producers.UserId);
             return View(producers);
         }
 
-        // GET: Producers/Edit/5 — Admin or own Producer
+        // GET — edit producer form, admin or the producer themselves
         [Authorize(Roles = "Admin,Producer")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -75,22 +87,33 @@ namespace GreenField.Controllers
 
             var userId = _userManager.GetUserId(User);
 
+            // producers can only edit their own profile
             if (User.IsInRole("Producer") && producer.UserId != userId)
                 return Forbid();
+
+            // admins get a user reassignment dropdown, producers don't see it
+            if (User.IsInRole("Admin"))
+            {
+                var producerUsers = await _userManager.GetUsersInRoleAsync("Producer");
+                ViewBag.UserList = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(
+                    producerUsers.Select(u => new { u.Id, Display = u.Email ?? u.UserName }),
+                    "Id", "Display", producer.UserId);
+            }
 
             return View(producer);
         }
 
-        // POST: Producers/Edit/5
+        // POST — saves edits to a producer, admin or own producer
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Producer")]
-        public async Task<IActionResult> Edit(int id, [Bind("ProducersId,UserId,BusinessName,BusinessDescription,BusinessBasedIn,LogoPath")] Producers producers)
+        public async Task<IActionResult> Edit(int id, [Bind("ProducersId,UserId,BusinessName,BusinessDescription,BusinessBasedIn,Logo")] Producers producers)
         {
             if (id != producers.ProducersId) return NotFound();
 
             var userId = _userManager.GetUserId(User);
 
+            // producers can't reassign their profile to a different user
             if (User.IsInRole("Producer") && producers.UserId != userId)
                 return Forbid();
 
@@ -113,7 +136,7 @@ namespace GreenField.Controllers
             return View(producers);
         }
 
-        // GET: Producers/Delete/5 — Admin only
+        // GET — delete confirmation page, admin only
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -127,7 +150,7 @@ namespace GreenField.Controllers
             return View(producer);
         }
 
-        // POST: Producers/Delete/5
+        // POST — actually deletes the producer after confirmation, admin only
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]

@@ -1,48 +1,30 @@
 @model GreenField.Models.Producers
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.BusinessName;
 }
 
-<h1 class="page-title">Details</h1>
+<div class="static-page">
+    <a asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> Back to Producers</a>
 
-<div>
-    <h4>Producers</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BusinessName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BusinessName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BusinessDescription)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BusinessDescription)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BusinessBasedIn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BusinessBasedIn)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Logo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Logo)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ProducersId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="producer-card" style="max-width:640px;margin-bottom:2rem;">
+        @if (!string.IsNullOrEmpty(Model.Logo))
+        {
+            <div class="producer-card-image"><img src="@Model.Logo" alt="@Model.BusinessName" /></div>
+        }
+        <div class="producer-card-body">
+            <h1 class="producer-name">@Model.BusinessName</h1>
+            @if (!string.IsNullOrEmpty(Model.BusinessBasedIn))
+            {
+                <p class="producer-location"><i class="bi bi-geo-alt-fill"></i> @Model.BusinessBasedIn</p>
+            }
+            <p class="producer-desc">@Model.BusinessDescription</p>
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="action-links mt-2">
+                    <a asp-action="Edit" asp-route-id="@Model.ProducersId" class="action-link">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@Model.ProducersId" class="action-link danger">Delete</a>
+                </div>
+            }
+        </div>
+    </div>
 </div>

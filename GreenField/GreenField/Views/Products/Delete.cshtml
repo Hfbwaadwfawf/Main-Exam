@@ -1,69 +1,30 @@
 @model GreenField.Models.Products
-
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Product";
 }
 
-<h1 class="page-title">Delete</h1>
+<div class="static-page">
+    <a asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> Back to Store</a>
+    <h1 class="page-title">Delete Product</h1>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Products</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.category)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Stock)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Stock)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsAvailable)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsAvailable)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Image)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Producers)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Producers.ProducersId)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="ProductsId" />
-        <input type="submit" value="Delete" class="btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+    <div class="panel-card" style="max-width:480px;">
+        <p class="text-muted mb-3">Are you sure you want to delete this product? This cannot be undone.</p>
+
+        @if (!string.IsNullOrEmpty(Model.Image))
+        {
+            <img src="@Model.Image" alt="@Model.ProductName" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:var(--r);margin-bottom:1rem;" />
+        }
+
+        <div class="form-group mb-1"><span class="text-sm text-muted">Product</span><p class="bold">@Model.ProductName</p></div>
+        <div class="form-group mb-1"><span class="text-sm text-muted">Category</span><p>@Model.category</p></div>
+        <div class="form-group mb-1"><span class="text-sm text-muted">Price</span><p>£@Model.Price.ToString("F2")</p></div>
+        <div class="form-group mb-3"><span class="text-sm text-muted">Stock</span><p>@Model.Stock</p></div>
+
+        <form asp-action="Delete" method="post" style="display:flex;gap:.75rem;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ProductsId" />
+            <button type="submit" class="btn-danger">Delete</button>
+            <a asp-action="Index" class="btn-ghost">Cancel</a>
+        </form>
+    </div>
 </div>

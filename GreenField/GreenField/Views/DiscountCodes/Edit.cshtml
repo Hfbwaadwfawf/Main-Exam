@@ -1,42 +1,38 @@
 @model GreenField.Models.DiscountCodes
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Code";
 }
 
-<h1 class="page-title">Edit</h1>
+<div class="static-page">
+    <a asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> Back to Codes</a>
+    <h1 class="page-title">Edit Code</h1>
 
-<h4>DiscountCodes</h4>
-<hr />
-<div style="display:flex;flex-direction:column;gap:.75rem;max-width:520px;">
-    <div style="max-width:520px;">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="panel-card" style="max-width:480px;">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
             <input type="hidden" asp-for="DiscountCodesId" />
-            <div class="form-group">
-                <label asp-for="Code" class="control-label"></label>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="form-group mb-2">
+                <label asp-for="Code">Code</label>
                 <input asp-for="Code" class="form-input" />
-                <span asp-validation-for="Code" class="text-danger"></span>
+                <span asp-validation-for="Code" class="text-red text-sm"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Percentage" class="control-label"></label>
-                <input asp-for="Percentage" class="form-input" />
-                <span asp-validation-for="Percentage" class="text-danger"></span>
+
+            <div class="form-group mb-2">
+                <label asp-for="Percentage">Discount %</label>
+                <input asp-for="Percentage" class="form-input" type="number" min="1" max="100" />
+                <span asp-validation-for="Percentage" class="text-red text-sm"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
-                </label>
+
+            <div class="form-group mb-3" style="flex-direction:row;align-items:center;gap:.5rem;">
+                <input asp-for="IsActive" class="custom-checkbox" />
+                <label asp-for="IsActive" style="font-weight:400;">Active</label>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn-primary" />
-            </div>
+
+            <button type="submit" class="btn-primary btn-full">Save Changes</button>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

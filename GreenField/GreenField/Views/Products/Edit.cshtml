@@ -1,67 +1,71 @@
 @model GreenField.Models.Products
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Product";
 }
 
-<h1 class="page-title">Edit</h1>
+<div class="static-page">
+    <a asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> Back to Store</a>
+    <h1 class="page-title">Edit Product</h1>
 
-<h4>Products</h4>
-<hr />
-<div style="display:flex;flex-direction:column;gap:.75rem;max-width:520px;">
-    <div style="max-width:520px;">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="panel-card" style="max-width:520px;">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ProductsId" />
-            <div class="form-group">
-                <label asp-for="ProducersId" class="control-label"></label>
-                <select asp-for="ProducersId" class="form-input" asp-items="ViewBag.ProducersId"></select>
-                <span asp-validation-for="ProducersId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProductName" class="control-label"></label>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            @* admins see the producer dropdown, producers just get a hidden field *@
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="form-group mb-2">
+                    <label asp-for="ProducersId">Producer</label>
+                    <select asp-for="ProducersId" class="form-input" asp-items="ViewBag.ProducersId"></select>
+                    <span asp-validation-for="ProducersId" class="text-red text-sm"></span>
+                </div>
+            }
+            else
+            {
+                <input type="hidden" asp-for="ProducersId" />
+            }
+            <div class="form-group mb-2">
+                <label asp-for="ProductName">Name</label>
                 <input asp-for="ProductName" class="form-input" />
-                <span asp-validation-for="ProductName" class="text-danger"></span>
+                <span asp-validation-for="ProductName" class="text-red text-sm"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
+            <div class="form-group mb-2">
+                <label asp-for="Description">Description</label>
                 <input asp-for="Description" class="form-input" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <span asp-validation-for="Description" class="text-red text-sm"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="category" class="control-label"></label>
+            <div class="form-group mb-2">
+                <label asp-for="category">Category</label>
                 <input asp-for="category" class="form-input" />
-                <span asp-validation-for="category" class="text-danger"></span>
+                <span asp-validation-for="category" class="text-red text-sm"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-input" />
-                <span asp-validation-for="Price" class="text-danger"></span>
+            <div class="form-row mb-2">
+                <div class="form-group" style="flex:1;">
+                    <label asp-for="Price">Price (£)</label>
+                    <input asp-for="Price" class="form-input" type="number" step="0.01" min="0" />
+                    <span asp-validation-for="Price" class="text-red text-sm"></span>
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label asp-for="Stock">Stock</label>
+                    <input asp-for="Stock" class="form-input" type="number" min="0" />
+                    <span asp-validation-for="Stock" class="text-red text-sm"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Stock" class="control-label"></label>
-                <input asp-for="Stock" class="form-input" />
-                <span asp-validation-for="Stock" class="text-danger"></span>
+            <div class="form-group mb-2">
+                <label asp-for="Image">Image URL or Path</label>
+                <input asp-for="Image" class="form-input" placeholder="e.g. /images/product.jpg or https://..." />
+                <span asp-validation-for="Image" class="text-red text-sm"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsAvailable" /> @Html.DisplayNameFor(model => model.IsAvailable)
-                </label>
+            <div class="form-group mb-3" style="flex-direction:row;align-items:center;gap:.5rem;">
+                <input asp-for="IsAvailable" class="custom-checkbox" />
+                <label asp-for="IsAvailable" style="font-weight:400;">Available</label>
             </div>
-            <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-input" />
-                <span asp-validation-for="Image" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn-primary" />
-            </div>
+
+            <button type="submit" class="btn-primary btn-full">Save Changes</button>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

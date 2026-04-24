@@ -12,7 +12,7 @@
         public bool IsAvailable { get; set; } = true;
         public string? Image { get; set; }
 
-        public Producers Producers { get; set; }
+        public Producers? Producers { get; set; }
         public ICollection<OrderProducts>? OrderProducts { get; set; }
         public ICollection<BasketProducts>? BasketProducts { get; set; }
     }

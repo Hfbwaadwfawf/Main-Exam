@@ -5,6 +5,7 @@
     displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
 }
 
+@Html.AntiForgeryToken()
 <div class="dashboard-wrap">
 
     <div class="dash-header">
@@ -12,6 +13,12 @@
             <h1 class="dash-title">Dashboard</h1>
             <p class="dash-subtitle">Welcome back, @displayName. Here's your account overview.</p>
         </div>
+        <form asp-area="Identity" asp-page="/Account/Logout" method="post" style="margin:0;">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-logout">
+                <i class="bi bi-box-arrow-right"></i> Log Out
+            </button>
+        </form>
     </div>
 
     @if (TempData["Success"] != null)
@@ -70,7 +77,7 @@
     <div class="dash-tabs">
         <button class="dash-tab active" data-tab="orders">Order History</button>
         <button class="dash-tab" data-tab="profile">My Profile</button>
-        <button class="dash-tab" data-tab="points">Points & Rewards</button>
+        <a asp-controller="LoyaltyPoints" asp-action="Index" class="dash-tab">Points & Rewards</a>
     </div>
 
     <div class="dash-panel active" id="tab-orders">
@@ -93,21 +100,91 @@
                             GreenField.Models.OrderStatus.Cancelled => "badge-cancelled",
                             _ => "badge-pending"
                         };
-                        <a href="/Orders/Details/@order.OrdersId" class="order-row">
-                            <div class="order-row-left">
-                                <p class="order-id">ORD-@order.OrdersId.ToString("D4")</p>
-                                <p class="order-meta">
-                                    @order.OrderDate.ToString("MMMM d, yyyy") &middot;
-                                    @order.OrderProducts.Count item@(order.OrderProducts.Count != 1 ? "s" : "") &middot;
-                                    @(order.IsDelivery ? "Delivery" : "Click & Collect")
-                                </p>
+                        <div class="order-row-block">
+                            <div class="order-row-top order-toggle" onclick="toggleOrder('std-@order.OrdersId')" style="cursor:pointer;">
+                                <div class="order-row-left">
+                                    <p class="order-id">ORD-@order.OrdersId.ToString("D4")</p>
+                                    <p class="order-meta">
+                                        @order.OrderDate.ToString("MMMM d, yyyy") &middot;
+                                        @order.OrderProducts.Count item@(order.OrderProducts.Count != 1 ? "s" : "") &middot;
+                                        @(order.IsDelivery ? "Delivery" : "Click & Collect")
+                                    </p>
+                                </div>
+                                <div class="order-row-right">
+                                    <span class="status-badge @statusClass">@order.Status</span>
+                                    <span class="order-price">£@order.TotalPrice.ToString("F2")</span>
+                                    <i class="bi bi-chevron-down order-chevron order-chevron-icon" id="chevron-std-@order.OrdersId"></i>
+                                </div>
                             </div>
-                            <div class="order-row-right">
-                                <span class="status-badge @statusClass">@order.Status</span>
-                                <span class="order-price">£@order.TotalPrice.ToString("F2")</span>
-                                <i class="bi bi-chevron-right order-chevron"></i>
+
+                            <div class="order-detail-panel" id="std-@order.OrdersId" style="display:none;">
+                                <table class="table order-detail-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th style="text-align:center;">Qty</th>
+                                            <th style="text-align:right;">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var op in order.OrderProducts ?? new List<GreenField.Models.OrderProducts>())
+                                        {
+                                            <tr>
+                                                <td>@op.Products?.ProductName</td>
+                                                <td style="text-align:center;">@op.Quantity</td>
+                                                <td style="text-align:right;">£@(((op.Products?.Price ?? 0) * op.Quantity).ToString("F2"))</td>
+                                            </tr>
+                                        }
+                                        @if (order.DeliveryFee > 0)
+                                        {
+                                            <tr>
+                                                <td colspan="2" class="text-muted">Delivery Fee</td>
+                                                <td style="text-align:right;">£@order.DeliveryFee.ToString("F2")</td>
+                                            </tr>
+                                        }
+                                        @if (order.UsedDiscount && !string.IsNullOrEmpty(order.DiscountName))
+                                        {
+                                            <tr>
+                                                <td colspan="2" class="text-green">Discount (@order.DiscountName)</td>
+                                                <td style="text-align:right;" class="discount-amount">Applied</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" class="bold">Total</td>
+                                            <td style="text-align:right;" class="bold">£@order.TotalPrice.ToString("F2")</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                                <div class="order-detail-meta">
+                                    @if (order.IsDelivery)
+                                    {
+                                        <p><i class="bi bi-geo-alt-fill"></i> Delivering to: <strong>@order.DeliveryAddress</strong></p>
+                                    }
+                                    else
+                                    {
+                                        <p><i class="bi bi-shop"></i> Click &amp; Collect
+                                            @if (order.CollectionDate.HasValue)
+                                            {
+                                                <span>&mdash; @order.CollectionDate.Value.ToString("d MMM yyyy")</span>
+                                            }
+                                        </p>
+                                    }
+                                </div>
+
+                                @if (order.Status == GreenField.Models.OrderStatus.Pending)
+                                {
+                                    <div class="order-detail-actions" id="cancel-wrap-@order.OrdersId">
+                                        <button class="btn-cancel"
+                                                onclick="cancelOrder(@order.OrdersId, this)">
+                                            <i class="bi bi-x-circle"></i> Cancel Order
+                                        </button>
+                                    </div>
+                                }
                             </div>
-                        </a>
+                        </div>
                     }
                 </div>
             }
@@ -176,15 +253,6 @@
         </div>
     </div>
 
-    <!-- 🔴 LOGOUT BUTTON -->
-    <div style="margin-top: 2rem; text-align:center;">
-        <form asp-area="Identity" asp-page="/Account/Logout" method="post">
-            @Html.AntiForgeryToken()
-            <button type="submit" class="btn-ghost" style="color:#dc3545; border-color:#dc3545;">
-                Log Out
-            </button>
-        </form>
-    </div>
 
 </div>
 
@@ -197,4 +265,48 @@
             document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
         });
     });
+
+    function toggleOrder(id) {
+        const panel = document.getElementById(id);
+        const chevron = document.getElementById('chevron-' + id);
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+    }
+
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+    async function cancelOrder(orderId, btn) {
+        if (!confirm('Are you sure you want to cancel this order?')) return;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Cancelling…';
+
+        const res = await fetch('/Orders/CancelAjax', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': token
+            },
+            body: `orderId=${orderId}`
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            if (data.success) {
+                // Update badge
+                const row = btn.closest('.order-row-block');
+                const badge = row.querySelector('.status-badge');
+                if (badge) {
+                    badge.textContent = 'Cancelled';
+                    badge.className = 'status-badge badge-cancelled';
+                }
+                // Remove cancel button wrap
+                document.getElementById('cancel-wrap-' + orderId)?.remove();
+            }
+        } else {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-x-circle"></i> Cancel Order';
+            alert('Could not cancel the order. Please try again.');
+        }
+    }
 </script>

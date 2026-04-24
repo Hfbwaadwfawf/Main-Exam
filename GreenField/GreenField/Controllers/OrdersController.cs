@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,25 +7,28 @@ using GreenField.Models;
 
 namespace GreenField.Controllers
 {
+    // whole controller requires login
     [Authorize]
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
 
+        // inject db and user manager
         public OrdersController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
 
-        // GET: Orders
+        // GET — order list, filtered by role
         public async Task<IActionResult> Index()
         {
             var userId = _userManager.GetUserId(User);
 
             if (User.IsInRole("Admin"))
             {
+                // admins see all orders
                 var allOrders = await _context.Orders
                     .Include(o => o.OrderProducts)
                         .ThenInclude(op => op.Products)
@@ -36,6 +39,7 @@ namespace GreenField.Controllers
 
             if (User.IsInRole("Producer"))
             {
+                // producers only see orders containing their products
                 var producer = await _context.Producers.FirstOrDefaultAsync(p => p.UserId == userId);
                 if (producer == null) return Forbid();
 
@@ -49,6 +53,7 @@ namespace GreenField.Controllers
                 return View(producerOrders);
             }
 
+            // standard users only see their own orders
             var myOrders = await _context.Orders
                 .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.Products)
@@ -59,39 +64,14 @@ namespace GreenField.Controllers
             return View(myOrders);
         }
 
-        // GET: Orders/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET — order details are shown inline on the dashboard now, so this just redirects there
+        public IActionResult Details(int? id)
         {
-            if (id == null) return NotFound();
-
-            var userId = _userManager.GetUserId(User);
-
-            var order = await _context.Orders
-                .Include(o => o.OrderProducts)
-                    .ThenInclude(op => op.Products)
-                        .ThenInclude(p => p.Producers)
-                .FirstOrDefaultAsync(m => m.OrdersId == id);
-
-            if (order == null) return NotFound();
-
-            if (!User.IsInRole("Admin") && order.UserId != userId)
-            {
-                if (User.IsInRole("Producer"))
-                {
-                    var producer = await _context.Producers.FirstOrDefaultAsync(p => p.UserId == userId);
-                    bool hasProduct = order.OrderProducts.Any(op => op.Products.ProducersId == producer?.ProducersId);
-                    if (!hasProduct) return Forbid();
-                }
-                else
-                {
-                    return Forbid();
-                }
-            }
-
-            return View(order);
+            TempData["Success"] = "View your order details in your dashboard below.";
+            return RedirectToAction("Index", "Dashboard");
         }
 
-        // POST: Orders/UpdateStatus — Admin and Producer
+        // POST — update order status, admin and producer only
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Producer")]
@@ -104,6 +84,7 @@ namespace GreenField.Controllers
 
             if (User.IsInRole("Producer"))
             {
+                // check the producer actually has a product in this order before allowing status change
                 var producer = await _context.Producers.FirstOrDefaultAsync(p => p.UserId == userId);
                 var hasProduct = await _context.OrderProducts
                     .AnyAsync(op => op.OrdersId == orderId && op.Products.ProducersId == producer!.ProducersId);
@@ -113,10 +94,35 @@ namespace GreenField.Controllers
             order.Status = status;
             await _context.SaveChangesAsync();
             TempData["Success"] = "Order status updated.";
-            return RedirectToAction(nameof(Details), new { id = orderId });
+
+            // send back to dashboard where the order rows live
+            return RedirectToAction("Index", "Dashboard");
         }
 
-        // POST: Orders/Cancel
+        // POST — AJAX cancel from the standard dashboard, returns JSON so the button can update without a reload
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelAjax(int orderId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var order = await _context.Orders.FindAsync(orderId);
+
+            if (order == null) return NotFound();
+
+            // only the order owner or an admin can cancel
+            if (order.UserId != userId && !User.IsInRole("Admin"))
+                return Forbid();
+
+            // can only cancel while still pending
+            if (order.Status != OrderStatus.Pending)
+                return Json(new { success = false, message = "Only pending orders can be cancelled." });
+
+            order.Status = OrderStatus.Cancelled;
+            await _context.SaveChangesAsync();
+            return Json(new { success = true });
+        }
+
+        // POST — regular cancel action (non-AJAX), redirects after cancelling
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int orderId)
@@ -139,7 +145,7 @@ namespace GreenField.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Orders/Delete/5 — Admin only
+        // GET — delete confirmation page, admin only
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -154,7 +160,7 @@ namespace GreenField.Controllers
             return View(order);
         }
 
-        // POST: Orders/Delete/5
+        // POST — deletes an order, admin only
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]

@@ -1,0 +1,120 @@
+@model GreenField.Models.LoyaltyPoints
+@{
+    ViewData["Title"] = "Points & Rewards";
+    var rewardCodes = ViewBag.RewardCodes as List<GreenField.Models.DiscountCodes> ?? new();
+    var userPoints = (int)(ViewBag.UserPoints ?? 0);
+}
+
+<div class="wrap page-pad">
+    <a asp-controller="Dashboard" asp-action="Index" class="back-link">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+
+    @* page header *@
+    <div class="row-between mb-4">
+        <div>
+            <h1 class="page-title">Points & Rewards</h1>
+            <p class="page-subtitle">Earn 10 points for every £1 you spend. Unlock exclusive discount codes as you go.</p>
+        </div>
+        <div class="stat-card" style="min-width:160px;">
+            <div class="stat-card-icon-wrap points-icon">
+                <i class="bi bi-star-fill"></i>
+            </div>
+            <div class="stat-card-body">
+                <p class="stat-card-label">Your Balance</p>
+                <p class="stat-card-big">@userPoints</p>
+                <p class="stat-card-meta">points</p>
+            </div>
+        </div>
+    </div>
+
+    @* how it works strip *@
+    <div class="how-grid mb-4">
+        <div class="how-card">
+            <div class="how-num">1</div>
+            <p class="how-title">Shop & Earn</p>
+            <p class="how-body">You get 10 points for every £1 spent on any order.</p>
+        </div>
+        <div class="how-card">
+            <div class="how-num">2</div>
+            <p class="how-title">Hit a Milestone</p>
+            <p class="how-body">Once your balance reaches a reward tier, your code unlocks automatically.</p>
+        </div>
+        <div class="how-card">
+            <div class="how-num">3</div>
+            <p class="how-title">Use Your Code</p>
+            <p class="how-body">Enter the code at checkout to get the discount applied to your basket.</p>
+        </div>
+    </div>
+
+    @* reward tiers *@
+    <h2 class="section-title">Reward Tiers</h2>
+
+    @if (!rewardCodes.Any())
+    {
+        <div class="panel-card">
+            <p class="empty-state">No reward tiers set up yet — check back soon.</p>
+        </div>
+    }
+    else
+    {
+        <div class="col" style="gap:1rem;">
+            @foreach (var reward in rewardCodes)
+            {
+                var unlocked = userPoints >= reward.PointsRequired;
+                var progress = reward.PointsRequired > 0
+                    ? Math.Min(100, (int)((double)userPoints / reward.PointsRequired * 100))
+                    : 100;
+                var pointsLeft = Math.Max(0, reward.PointsRequired - userPoints);
+
+                <div class="panel-card" style="border-color: @(unlocked ? "var(--green)" : "var(--border)");">
+                    <div class="row-between mb-2">
+                        <div style="display:flex;align-items:center;gap:.75rem;">
+                            @* locked/unlocked icon *@
+                            <div class="stat-card-icon-wrap @(unlocked ? "" : "orders-icon")" style="width:36px;height:36px;font-size:1rem;">
+                                <i class="bi @(unlocked ? "bi-unlock-fill" : "bi-lock-fill")"></i>
+                            </div>
+                            <div>
+                                <p class="bold" style="font-size:1rem;">@reward.Percentage% Off Your Basket</p>
+                                <p class="text-sm text-muted">@reward.PointsRequired points required</p>
+                            </div>
+                        </div>
+                        @if (unlocked)
+                        {
+                            @* show the code when unlocked *@
+                            <div style="text-align:right;">
+                                <p class="text-sm text-muted mb-1">Your code</p>
+                                <span class="bold" style="font-size:1.1rem;color:var(--green);letter-spacing:.05em;">@reward.Code</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="status-badge badge-pending">Locked</span>
+                        }
+                    </div>
+
+                    @* progress bar *@
+                    <div style="background:var(--border);border-radius:var(--r-pill);height:8px;overflow:hidden;margin-bottom:.4rem;">
+                        <div style="width:@progress%;background:var(--green);height:100%;border-radius:var(--r-pill);transition:width .4s;"></div>
+                    </div>
+                    <p class="text-sm text-muted">
+                        @if (unlocked)
+                        {
+                            <span class="text-green bold"><i class="bi bi-check-circle-fill"></i> Unlocked! Use code <strong>@reward.Code</strong> at checkout.</span>
+                        }
+                        else
+                        {
+                            <span>@pointsLeft more points to unlock this reward</span>
+                        }
+                    </p>
+                </div>
+            }
+        </div>
+    }
+
+    @* points history from orders *@
+    <h2 class="section-title mt-3">How You Earned</h2>
+    <div class="panel-card">
+        <p class="text-muted text-sm">Points are awarded automatically when your order is placed — 10 pts per £1 spent.</p>
+    </div>
+</div>

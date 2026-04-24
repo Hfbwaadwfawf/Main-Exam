@@ -1,220 +1,89 @@
-﻿@model List<GreenField.Models.BasketProducts>
+@model GreenField.Models.Orders
 @{
-    ViewData["Title"] = "Confirm Your Order";
-    var selectedIds = ViewBag.SelectedProductIds as List<int> ?? new List<int>();
-    var discountCode = ViewBag.DiscountCode as string ?? "";
-    decimal subtotal = ViewBag.Subtotal;
-    decimal discountPercent = ViewBag.DiscountPercent;
-    decimal discountAmt = subtotal * (discountPercent / 100);
-    decimal deliveryFee = 3.99m;
+    ViewData["Title"] = "Order Confirmed";
 }
 
-<div class="wrap page-pad">
+<div class="wrap page-pad" style="max-width:720px;">
 
-    <h1 class="page-title">Confirm Your Order</h1>
-
-    @if (TempData["Error"] != null)
+    @if (TempData["Success"] != null)
     {
-        <div class="alert alert-danger">@TempData["Error"]</div>
+        <div class="alert alert-success">@TempData["Success"]</div>
     }
 
-    <!-- Items -->
+    <!-- Success header -->
+    <div style="margin-bottom:1.5rem;">
+        <h1 class="page-title" style="color:var(--green);">Order Confirmed!</h1>
+        <p class="text-muted">
+            Thank you for your order. Your order number is
+            <strong class="text-green">#@Model.OrdersId</strong>.
+        </p>
+    </div>
+
+    <!-- Items + totals table -->
     <div class="card mb-3">
         <div class="card-body">
-            <h2 class="section-title">Items</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th style="text-align:center;">Quantity</th>
+                        <th style="text-align:right;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var op in Model.OrderProducts ?? new List<GreenField.Models.OrderProducts>())
+                    {
+                        <tr>
+                            <td>@op.Products?.ProductName</td>
+                            <td style="text-align:center;">@op.Quantity</td>
+                            <td style="text-align:right;">£@(((op.Products?.Price ?? 0) * op.Quantity).ToString("F2"))</td>
+                        </tr>
+                    }
+                    @if (Model.DeliveryFee > 0)
+                    {
+                        <tr>
+                            <td colspan="2" class="text-muted">Delivery Fee</td>
+                            <td style="text-align:right;">£@Model.DeliveryFee.ToString("F2")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="bold">Total</td>
+                        <td style="text-align:right;" class="bold">£@Model.TotalPrice.ToString("F2")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
 
-            @foreach (var item in Model)
+    <!-- Order info -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <p class="mb-1"><strong>Status:</strong> @Model.Status</p>
+            @if (Model.IsDelivery)
             {
-                <div class="list-row">
-                    <span class="bold">@item.Products?.ProductName</span>
-                    <span class="text-muted">× @item.Quantity</span>
-                    <span class="text-green bold">
-                        £@((item.Products!.Price * item.Quantity).ToString("F2"))
-                    </span>
-                </div>
+                <p class="mb-1"><strong>Delivering to:</strong> @Model.DeliveryAddress</p>
+            }
+            else
+            {
+                <p class="mb-1"><strong>Collection</strong> — we'll send pickup details shortly.</p>
+                @if (Model.CollectionDate.HasValue)
+                {
+                    <p class="mb-1"><strong>Collection Date:</strong> @Model.CollectionDate.Value.ToString("d MMM yyyy")</p>
+                }
+            }
+            @if (Model.UsedDiscount)
+            {
+                <p class="mb-1"><strong>Discount Applied:</strong> @Model.DiscountName</p>
             }
         </div>
     </div>
 
-    <form asp-action="PlaceOrder" asp-controller="Baskets" method="post" id="placeOrderForm">
-        @Html.AntiForgeryToken()
+    <!-- Actions -->
+    <div class="row" style="gap:.75rem;">
+        <a asp-controller="Products" asp-action="Index" class="btn btn-primary">Continue Shopping</a>
+        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-ghost">My Orders</a>
+    </div>
 
-        @foreach (var id in selectedIds)
-        {
-            <input type="hidden" name="selectedProductIds" value="@id" />
-        }
-        <input type="hidden" name="discountCode" value="@discountCode" />
-
-        <!-- Fulfilment -->
-        <div class="card mb-3">
-            <div class="card-body">
-                <h2 class="section-title">Fulfilment</h2>
-
-                <div class="row">
-                    <label class="row">
-                        <input type="radio" name="isDelivery" value="false" checked onchange="toggleDelivery(false)" />
-                        <span>Click & Collect</span>
-                    </label>
-
-                    <label class="row">
-                        <input type="radio" name="isDelivery" value="true" onchange="toggleDelivery(true)" />
-                        <span>Delivery</span>
-                    </label>
-                </div>
-
-                <!-- Address -->
-                <div id="addressBlock" class="mt-2" style="display:none;">
-                    <div class="form-group">
-                        <label>Delivery Address</label>
-                        <input type="text"
-                               id="deliveryAddress"
-                               name="deliveryAddress"
-                               class="form-input"
-                               placeholder="Enter your full delivery address" />
-                        <span id="addressError" class="text-red text-sm" style="display:none;">
-                            Please enter a delivery address.
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Date -->
-        <div class="card mb-3" id="dateBlock">
-            <div class="card-body">
-                <h2 class="section-title" id="dateLabel">Collection Date</h2>
-                <p class="text-muted text-sm mb-2">Must be a future date.</p>
-
-                <input type="date"
-                       id="collectionDate"
-                       name="collectionDate"
-                       class="form-input"
-                       style="max-width:280px;" />
-
-                <span id="dateError" class="text-red text-sm" style="display:none;">
-                    Please choose a future date.
-                </span>
-            </div>
-        </div>
-
-        <!-- Summary -->
-        <div class="card-tinted mb-3">
-            <div class="card-body">
-                <h2 class="section-title">Summary</h2>
-
-                <div class="summary-lines">
-                    <div class="summary-line">
-                        <span>Subtotal</span>
-                        <span>£@subtotal.ToString("F2")</span>
-                    </div>
-
-                    @if (discountPercent > 0)
-                    {
-                        <div class="summary-line">
-                            <span>Discount (@discountCode — @discountPercent%)</span>
-                            <span class="discount-amount">-£@discountAmt.ToString("F2")</span>
-                        </div>
-                    }
-
-                    <div class="summary-line">
-                        <span>Delivery</span>
-                        <span id="deliveryFeeDisplay">Free</span>
-                    </div>
-
-                    <div class="summary-total">
-                        <span>Total</span>
-                        <span id="totalDisplay">
-                            £@((subtotal - discountAmt).ToString("F2"))
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="row-between">
-            <a asp-action="Index" asp-controller="Baskets" class="link-muted">
-                ← Back to Basket
-            </a>
-
-            <button type="submit" class="btn-checkout" onclick="return validateForm()">
-                Place Order
-            </button>
-        </div>
-    </form>
 </div>
-
-@section Scripts {
-    <script>
-        const subtotal = @subtotal.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
-        const discountAmt = @discountAmt.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
-        const deliveryFee = @deliveryFee.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
-
-        let isDelivery = false;
-
-        const dt = document.getElementById('collectionDate');
-        const todayStr = new Date().toISOString().split('T')[0];
-        dt.min = todayStr;
-
-        function toggleDelivery(val) {
-            isDelivery = val;
-
-            const addressBlock = document.getElementById('addressBlock');
-            const dateLabel = document.getElementById('dateLabel');
-
-            if (val) {
-                addressBlock.style.display = 'block';
-                dateLabel.textContent = "Delivery Date";
-            } else {
-                addressBlock.style.display = 'none';
-                dateLabel.textContent = "Collection Date";
-            }
-
-            updateTotal();
-        }
-
-        function updateTotal() {
-            const fee = isDelivery ? deliveryFee : 0;
-            const total = (subtotal - discountAmt + fee).toFixed(2);
-
-            document.getElementById('deliveryFeeDisplay').textContent = isDelivery
-                ? `£${fee.toFixed(2)}`
-                : 'Free';
-
-            document.getElementById('totalDisplay').textContent = `£${total}`;
-        }
-
-        function validateForm() {
-            let valid = true;
-
-            // Address validation
-            const addrErr = document.getElementById('addressError');
-            const addrInput = document.getElementById('deliveryAddress');
-
-            if (isDelivery && !addrInput.value.trim()) {
-                addrErr.style.display = 'block';
-                valid = false;
-            } else {
-                addrErr.style.display = 'none';
-            }
-
-            // Date validation
-            const dateErr = document.getElementById('dateError');
-            const dateVal = document.getElementById('collectionDate').value;
-
-            const today = new Date();
-            today.setHours(0,0,0,0);
-
-            const selected = new Date(dateVal);
-
-            if (!dateVal || selected <= today) {
-                dateErr.style.display = 'block';
-                valid = false;
-            } else {
-                dateErr.style.display = 'none';
-            }
-
-            return valid;
-        }
-    </script>
-}

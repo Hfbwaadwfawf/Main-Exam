@@ -1,51 +1,46 @@
 @model GreenField.Models.Producers
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add Producer";
 }
 
-<h1 class="page-title">Create</h1>
+<div class="static-page">
+    <a asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> Back to Producers</a>
+    <h1 class="page-title">Add Producer</h1>
 
-<h4>Producers</h4>
-<hr />
-<div style="display:flex;flex-direction:column;gap:.75rem;max-width:520px;">
-    <div style="max-width:520px;">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-input" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
+    <div class="panel-card" style="max-width:520px;">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            @* user dropdown — only shows Producer-role accounts *@
+            <div class="form-group mb-2">
+                <label asp-for="UserId">Assign to User</label>
+                <select asp-for="UserId" class="form-input" asp-items="ViewBag.UserList">
+                    <option value="">— Select a Producer account —</option>
+                </select>
+                <span asp-validation-for="UserId" class="text-red text-sm"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="BusinessName" class="control-label"></label>
+            <div class="form-group mb-2">
+                <label asp-for="BusinessName">Business Name</label>
                 <input asp-for="BusinessName" class="form-input" />
-                <span asp-validation-for="BusinessName" class="text-danger"></span>
+                <span asp-validation-for="BusinessName" class="text-red text-sm"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="BusinessDescription" class="control-label"></label>
+            <div class="form-group mb-2">
+                <label asp-for="BusinessDescription">Description (optional)</label>
                 <input asp-for="BusinessDescription" class="form-input" />
-                <span asp-validation-for="BusinessDescription" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="BusinessBasedIn" class="control-label"></label>
-                <input asp-for="BusinessBasedIn" class="form-input" />
-                <span asp-validation-for="BusinessBasedIn" class="text-danger"></span>
+            <div class="form-group mb-2">
+                <label asp-for="BusinessBasedIn">Based In (optional)</label>
+                <input asp-for="BusinessBasedIn" class="form-input" placeholder="e.g. Cheltenham, Gloucestershire" />
             </div>
-            <div class="form-group">
-                <label asp-for="Logo" class="control-label"></label>
-                <input asp-for="Logo" class="form-input" />
-                <span asp-validation-for="Logo" class="text-danger"></span>
+            <div class="form-group mb-3">
+                <label asp-for="Logo">Logo URL or Path (optional)</label>
+                <input asp-for="Logo" class="form-input" placeholder="e.g. /images/logo.png or https://..." />
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn-primary" />
-            </div>
+
+            <button type="submit" class="btn-primary btn-full">Add Producer</button>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

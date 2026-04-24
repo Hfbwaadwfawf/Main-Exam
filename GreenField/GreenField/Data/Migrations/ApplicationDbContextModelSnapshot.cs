@@ -89,6 +89,9 @@ namespace GreenField.Data.Migrations
                     b.Property<decimal>("Percentage")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("PointsRequired")
+                        .HasColumnType("int");
+
                     b.HasKey("DiscountCodesId");
 
                     b.ToTable("DiscountCodes");
