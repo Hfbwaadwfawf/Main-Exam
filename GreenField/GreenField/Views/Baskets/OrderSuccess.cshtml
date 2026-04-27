@@ -1,25 +1,41 @@
+
+@* Bind this view to the Orders model passed from BasketsController.OrderSuccess() *@
 @model GreenField.Models.Orders
+
 @{
+    @* Set the browser tab title for this page *@
     ViewData["Title"] = "Order Confirmed";
 }
 
+@* Constrain the page content to a readable max width centred on screen *@
 <div class="wrap page-pad" style="max-width:720px;">
 
+    @* ── Success Alert ──────────────────────────────────────
+       TempData["Success"] is set by BasketsController.PlaceOrder()
+       after the order is saved. Only renders if the message exists. *@
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success">@TempData["Success"]</div>
     }
 
-    <!-- Success header -->
+    @* ── Page Header ────────────────────────────────────────
+       Displays a green confirmation heading and the unique
+       order ID so the customer can reference it later. *@
     <div style="margin-bottom:1.5rem;">
         <h1 class="page-title" style="color:var(--green);">Order Confirmed!</h1>
         <p class="text-muted">
             Thank you for your order. Your order number is
+            @* Model.OrdersId is the primary key of the Orders record
+               just created in the database *@
             <strong class="text-green">#@Model.OrdersId</strong>.
         </p>
     </div>
 
-    <!-- Items + totals table -->
+    @* ── Order Items Table ───────────────────────────────────
+       Loops through every OrderProducts record linked to this
+       order and displays product name, quantity and line total.
+       A delivery fee row is appended conditionally.
+       The tfoot shows the final order total from the database. *@
     <div class="card mb-3">
         <div class="card-body">
             <table class="table">
@@ -31,14 +47,24 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @* Iterate over the OrderProducts navigation property.
+                       Falls back to an empty list if the collection is null
+                       to prevent a NullReferenceException. *@
                     @foreach (var op in Model.OrderProducts ?? new List<GreenField.Models.OrderProducts>())
                     {
                         <tr>
+                            @* Use null-conditional operator in case Products
+                               navigation property hasn't been eagerly loaded *@
                             <td>@op.Products?.ProductName</td>
                             <td style="text-align:center;">@op.Quantity</td>
+                            @* Calculate line subtotal: unit price × quantity.
+                               Defaults price to 0 if Products is null. *@
                             <td style="text-align:right;">£@(((op.Products?.Price ?? 0) * op.Quantity).ToString("F2"))</td>
                         </tr>
                     }
+
+                    @* Only show a delivery fee row if the order had a delivery charge.
+                       Collection orders have DeliveryFee = 0 so this row is hidden. *@
                     @if (Model.DeliveryFee > 0)
                     {
                         <tr>
@@ -47,6 +73,9 @@
                         </tr>
                     }
                 </tbody>
+
+                @* tfoot contains the final total stored on the Orders record.
+                   This includes any discount and delivery fee already applied. *@
                 <tfoot>
                     <tr>
                         <td colspan="2" class="bold">Total</td>
@@ -57,22 +86,38 @@
         </div>
     </div>
 
-    <!-- Order info -->
+    @* ── Order Info Card ─────────────────────────────────────
+       Shows fulfilment details. The display differs depending
+       on whether the order is delivery or click & collect. *@
     <div class="card mb-3">
         <div class="card-body">
+
+            @* Current order status — starts as Pending after placement *@
             <p class="mb-1"><strong>Status:</strong> @Model.Status</p>
+
+            @* ── Fulfilment type branch ──
+               IsDelivery = true  → show the delivery address
+               IsDelivery = false → show collection message and optional date *@
             @if (Model.IsDelivery)
             {
+                @* Display the address the customer entered on the Confirmation page *@
                 <p class="mb-1"><strong>Delivering to:</strong> @Model.DeliveryAddress</p>
             }
             else
             {
+                @* Click & Collect: inform the customer pickup details will follow *@
                 <p class="mb-1"><strong>Collection</strong> — we'll send pickup details shortly.</p>
+
+                @* Only show collection date if one was provided during checkout *@
                 @if (Model.CollectionDate.HasValue)
                 {
+                    @* Format the DateOnly as a readable string e.g. "3 Jun 2026" *@
                     <p class="mb-1"><strong>Collection Date:</strong> @Model.CollectionDate.Value.ToString("d MMM yyyy")</p>
                 }
             }
+
+            @* If a discount code was applied, show the code name here.
+               UsedDiscount is a boolean flag set in BasketsController.PlaceOrder() *@
             @if (Model.UsedDiscount)
             {
                 <p class="mb-1"><strong>Discount Applied:</strong> @Model.DiscountName</p>
@@ -80,7 +125,9 @@
         </div>
     </div>
 
-    <!-- Actions -->
+    @* ── Action Buttons ──────────────────────────────────────
+       Two CTAs: return to the store to keep shopping, or go
+       to the Dashboard to view the full order history. *@
     <div class="row" style="gap:.75rem;">
         <a asp-controller="Products" asp-action="Index" class="btn btn-primary">Continue Shopping</a>
         <a asp-controller="Dashboard" asp-action="Index" class="btn btn-ghost">My Orders</a>

@@ -87,6 +87,35 @@
 
         </div>
     </div>
+    <!-- ?? Footer ?? -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <p class="footer-logo">GLH</p>
+                <p class="footer-tagline">Connecting communities with independent local food producers across Gloucestershire and the surrounding regions.</p>
+            </div>
+            <div class="footer-col">
+                <p class="footer-col-heading">Shop</p>
+                <a asp-controller="Products" asp-action="Index">All Products</a>
+                <a asp-controller="Products" asp-action="Index">Featured</a>
+                <a asp-controller="Products" asp-action="Index">New Arrivals</a>
+                <a asp-controller="Products" asp-action="Index">Deals</a>
+            </div>
+            <div class="footer-col">
+                <p class="footer-col-heading">Producers</p>
+                <a asp-controller="Producers" asp-action="Index">All Producers</a>
+                <a asp-controller="Producers" asp-action="Index">Join as Producer</a>
+                <a asp-area="Identity" asp-page="/Account/Login">Producer Login</a>
+            </div>
+            <div class="footer-col">
+                <p class="footer-col-heading">Help</p>
+                <a asp-controller="Home" asp-action="Privacy">About GLH</a>
+                <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+                <a>#</a>
+                <a>#</a>
+            </div>
+        </div>
+    </footer>
 
     <partial name="_ValidationScriptsPartial" />
     @await RenderSectionAsync("Scripts", required: false)

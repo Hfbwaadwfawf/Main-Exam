@@ -1,44 +1,70 @@
+
+@* Bind to the Basket model passed from BasketsController.Index() *@
 @model GreenField.Models.Basket
+
 @{
+    @* Set the browser tab title *@
     ViewData["Title"] = "Your Basket";
+
+    @* Safely extract the basket items list — defaults to empty if null *@
     var items = Model.BasketProducts?.ToList() ?? new List<GreenField.Models.BasketProducts>();
 }
 
+@* Two-column layout: items list on the left, order summary panel on the right *@
 <div class="basket-layout">
 
-    <!-- ── Left: Item List ── -->
+    @* ════════════════════════════════════════════════════════
+       LEFT COLUMN — Item List
+       ════════════════════════════════════════════════════════ *@
     <div class="basket-main">
         <h1 class="basket-title">Your Basket</h1>
         <p class="basket-subtitle">Tick the items you'd like to checkout. Unticked items stay in your basket.</p>
 
+        @* ── Empty State ─────────────────────────────────────
+           Shown when the basket has no items at all *@
         @if (!items.Any())
         {
             <div class="basket-empty">
                 <i class="bi bi-basket3"></i>
                 <p>Your basket is empty.</p>
+                @* Direct the user back to the store *@
                 <a asp-controller="Products" asp-action="Index" class="btn-primary">Browse Products</a>
             </div>
         }
         else
         {
-            <!-- Select all bar -->
+            @* ── Select All Bar ───────────────────────────────
+               Shows a master checkbox to check/uncheck all items
+               and a live counter e.g. "2 of 3 selected" *@
             <div class="select-all-bar">
                 <label class="checkbox-label">
+                    @* Controlled by JS — toggles all .item-checkbox inputs *@
                     <input type="checkbox" id="selectAll" class="custom-checkbox" />
                     <span>Select all items</span>
                 </label>
+                @* Updated by updateSelectedCount() in JS *@
                 <span class="selected-count" id="selectedCount">0 of @items.Count selected</span>
             </div>
 
-            <!-- Items -->
+            @* ── Item Cards ───────────────────────────────────
+               One card per basket item. Each card stores the
+               unit price and ID as data attributes so JS can
+               recalculate the summary without a server call. *@
             <div class="basket-items" id="basketItems">
                 @foreach (var item in items)
                 {
+                    @* Pre-calculate the line total for initial render *@
                     var linePrice = (item.Products?.Price ?? 0) * item.Quantity;
+
+                    @* data-price is read by JS to compute subtotals
+                       data-id is used as a fallback reference *@
                     <div class="basket-item" id="item-@item.BasketProductsId"
                          data-price="@item.Products?.Price.ToString("F2")"
                          data-id="@item.BasketProductsId">
 
+                        @* ── Item checkbox ─────────────────────────────
+                           Checked by default. The value is the BasketProductsId
+                           which gets submitted to Confirmation as selectedProductIds. *@
                         <label class="item-checkbox-wrap">
                             <input type="checkbox"
                                    class="custom-checkbox item-checkbox"
@@ -47,6 +73,8 @@
                                    checked />
                         </label>
 
+                        @* ── Product image ──────────────────────────────
+                           Falls back to a placeholder if no image URL is set *@
                         <div class="item-image">
                             @if (!string.IsNullOrEmpty(item.Products?.Image))
                             {
@@ -58,10 +86,13 @@
                             }
                         </div>
 
+                        @* ── Product info ───────────────────────────────
+                           Name, producer business name, and category tag *@
                         <div class="item-details">
                             <p class="item-name">@item.Products?.ProductName</p>
                             <p class="item-producer">@item.Products?.Producers?.BusinessName</p>
                             <div class="item-tags">
+                                @* Only render category tag if category is set *@
                                 @if (!string.IsNullOrEmpty(item.Products?.category))
                                 {
                                     <span class="tag">@item.Products.category</span>
@@ -69,12 +100,20 @@
                             </div>
                         </div>
 
+                        @* ── Right side: price + quantity controls ───────
+                           Line price is updated by JS when quantity changes.
+                           Buttons call updateQty() and removeItem() via AJAX. *@
                         <div class="item-right">
+                            @* id used by JS to update the displayed price *@
                             <p class="item-price" id="price-@item.BasketProductsId">£@linePrice.ToString("F2")</p>
                             <div class="qty-control">
+                                @* Decrement — if new qty would be 0, removeItem() is called instead *@
                                 <button class="qty-btn" onclick="updateQty(@item.BasketProductsId, @(item.Quantity - 1))">−</button>
+                                @* Current quantity — id used by JS to read/update the value *@
                                 <span class="qty-value" id="qty-@item.BasketProductsId">@item.Quantity</span>
+                                @* Increment *@
                                 <button class="qty-btn" onclick="updateQty(@item.BasketProductsId, @(item.Quantity + 1))">+</button>
+                                @* Remove button — calls removeItem() which POSTs to Baskets/RemoveProduct *@
                                 <button class="qty-btn remove-btn" onclick="removeItem(@item.BasketProductsId)">
                                     <i class="bi bi-trash3"></i>
                                 </button>
@@ -82,7 +121,10 @@
                         </div>
                     </div>
 
-                    <!-- Unselected warning (hidden by default, shown via JS) -->
+                    @* ── Unselected Warning ──────────────────────────────
+                       Hidden by default, shown by JS when this item's
+                       checkbox is unchecked to inform the user it won't
+                       be included in the order. *@
                     <div class="unselected-warning" id="warning-@item.BasketProductsId" style="display:none;">
                         <i class="bi bi-info-circle-fill"></i>
                         <span class="item-name-warn">@item.Products?.ProductName</span> is not selected and will stay in your basket after checkout.
@@ -92,19 +134,27 @@
         }
     </div>
 
-    <!-- ── Right: Order Summary ── -->
+    @* ════════════════════════════════════════════════════════
+       RIGHT COLUMN — Order Summary Panel
+       Only rendered when there are items in the basket
+       ════════════════════════════════════════════════════════ *@
     @if (items.Any())
     {
         <aside class="order-summary">
             <h2 class="summary-heading">Order Summary</h2>
 
+            @* Inform the user delivery cost is shown on the next step *@
             <p class="summary-info">
                 <i class="bi bi-info-circle"></i>
                 Delivery or pickup will be selected during checkout.
             </p>
 
+            @* ── Price Lines ──────────────────────────────────
+               subtotalLabel and subtotalValue are updated by JS
+               as the user selects/deselects items or changes qty *@
             <div class="summary-lines">
                 <div class="summary-line">
+                    @* JS updates this to show how many items are selected *@
                     <span id="subtotalLabel">Subtotal (@items.Count items)</span>
                     <span id="subtotalValue">£0.00</span>
                 </div>
@@ -114,42 +164,58 @@
                 </div>
             </div>
 
-            <!-- Discount applied indicator -->
+            @* ── Discount Applied Indicator ───────────────────
+               Hidden until a valid code is applied via applyDiscount().
+               Shows the code name and percentage. *@
             <div id="discountApplied" class="discount-applied" style="display:none;">
                 <span id="discountAppliedText"></span>
             </div>
 
+            @* Discount amount row — hidden until a code is applied *@
             <div class="summary-line discount-line" id="discountLine" style="display:none;">
                 <span id="discountLabel">Discount</span>
                 <span id="discountValue" class="discount-amount"></span>
             </div>
 
+            @* Running total — updated by JS after every change *@
             <div class="summary-total">
                 <span>Total</span>
                 <span id="totalValue">£0.00</span>
             </div>
 
-            <!-- Checkout form -->
+            @* ── Checkout Form ────────────────────────────────
+               Uses GET so the selected product IDs and discount
+               code are passed as query string params to
+               BasketsController.Confirmation(). *@
             <form asp-action="Confirmation" asp-controller="Baskets" method="get" id="checkoutForm">
+                @* JS populates this div with hidden inputs for each
+                   checked item's BasketProductsId before submitting *@
                 <div id="hiddenCheckboxes"></div>
+
+                @* Stores the validated discount code to pass to Confirmation *@
                 <input type="hidden" name="discountCode" id="appliedCodeInput" value="" />
 
+                @* Disabled until at least one item is selected (controlled by JS) *@
                 <button type="submit" class="btn-checkout" id="checkoutBtn" disabled>
                     Proceed to Checkout
                 </button>
             </form>
 
+            @* Link back to the store without losing basket contents *@
             <a asp-controller="Products" asp-action="Index" class="btn-continue">
                 Continue Shopping
             </a>
 
-            <!-- Discount code -->
+            @* ── Discount Code Input ──────────────────────────
+               Calls applyDiscount() which hits Baskets/ValidateDiscount
+               via AJAX and updates the summary if the code is valid *@
             <div class="discount-section">
                 <p class="discount-label">HAVE A CODE?</p>
                 <div class="discount-input-row">
                     <input type="text" id="discountCodeInput" class="form-input" placeholder="Enter discount code" />
                     <button class="btn-apply" onclick="applyDiscount()">Apply</button>
                 </div>
+                @* Error/success message shown below the input by JS *@
                 <p id="discountMsg" class="discount-msg"></p>
             </div>
         </aside>
@@ -158,41 +224,60 @@
 
 @section Scripts {
     <script>
+        // CSRF token needed for all POST fetch requests to prevent
+        // cross-site request forgery attacks on the basket endpoints
         const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+        // Tracks the currently applied discount percentage (0 = none applied)
         let appliedDiscount = 0;
+        // Stores the applied discount code string to pass to Confirmation
         let appliedCode = '';
+
+        // ── Initialisation ───────────────────────────────────────
+        // Run setup once the DOM is fully parsed
         document.addEventListener('DOMContentLoaded', () => {
+            // Calculate initial subtotal based on all items being checked by default
             updateSummary();
+            // Sync the Select All checkbox state with individual checkboxes
             updateSelectAll();
 
+            // Select All checkbox — toggles every item checkbox
             document.getElementById('selectAll')?.addEventListener('change', function () {
                 document.querySelectorAll('.item-checkbox').forEach(cb => {
                     cb.checked = this.checked;
+                    // Update the green border highlight on the item card
                     toggleItemHighlight(cb);
                 });
+                // Recalculate everything after bulk change
                 updateSummary();
                 updateWarnings();
                 updateSelectedCount();
             });
 
+            // Individual item checkboxes — update summary on each change
             document.querySelectorAll('.item-checkbox').forEach(cb => {
                 cb.addEventListener('change', function () {
                     toggleItemHighlight(this);
                     updateSummary();
                     updateWarnings();
                     updateSelectedCount();
+                    // Keep Select All in sync (may become indeterminate)
                     updateSelectAll();
                 });
             });
         });
 
-        // ── Highlight checked items ───────────────────
+        // ── toggleItemHighlight ───────────────────────────────────
+        // Adds or removes the 'item-selected' CSS class (green border)
+        // on the item card based on its checkbox state
         function toggleItemHighlight(cb) {
             const itemEl = cb.closest('.basket-item');
             if (itemEl) itemEl.classList.toggle('item-selected', cb.checked);
         }
 
-        // ── Unselected warnings ───────────────────────
+        // ── updateWarnings ────────────────────────────────────────
+        // Shows the yellow warning banner beneath any item that is
+        // unchecked, informing the user it won't be ordered
         function updateWarnings() {
             document.querySelectorAll('.item-checkbox').forEach(cb => {
                 const id = cb.value;
@@ -201,41 +286,55 @@
             });
         }
 
-        // ── Select all sync ───────────────────────────
+        // ── updateSelectAll ───────────────────────────────────────
+        // Keeps the master Select All checkbox in sync:
+        //   all checked   → checked
+        //   none checked  → unchecked
+        //   some checked  → indeterminate (dash state)
         function updateSelectAll() {
-            const all = document.querySelectorAll('.item-checkbox');
+            const all     = document.querySelectorAll('.item-checkbox');
             const checked = document.querySelectorAll('.item-checkbox:checked');
             const selectAll = document.getElementById('selectAll');
             if (selectAll) {
-                selectAll.checked = all.length > 0 && checked.length === all.length;
+                selectAll.checked       = all.length > 0 && checked.length === all.length;
                 selectAll.indeterminate = checked.length > 0 && checked.length < all.length;
             }
         }
 
+        // ── updateSelectedCount ───────────────────────────────────
+        // Updates the "X of Y selected" text in the Select All bar
         function updateSelectedCount() {
-            const total = document.querySelectorAll('.item-checkbox').length;
+            const total   = document.querySelectorAll('.item-checkbox').length;
             const checked = document.querySelectorAll('.item-checkbox:checked').length;
             const el = document.getElementById('selectedCount');
             if (el) el.textContent = `${checked} of ${total} selected`;
         }
 
-        // ── Summary calc ──────────────────────────────
+        // ── updateSummary ─────────────────────────────────────────
+        // Recalculates the subtotal, discount and total from checked
+        // items and updates all the summary panel text nodes.
+        // Also rebuilds the hidden checkbox inputs for the checkout form
+        // and enables/disables the checkout button.
         function updateSummary() {
-            let subtotal = 0;
+            let subtotal      = 0;
             let selectedCount = 0;
 
+            // Sum up checked items using the unit price stored in data-price
             document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
                 const item = document.getElementById('item-' + cb.value);
                 if (!item) return;
                 const unitPrice = parseFloat(item.dataset.price);
+                // Read current quantity from the qty span (may have been changed)
                 const qty = parseInt(document.getElementById('qty-' + cb.value)?.textContent ?? '1');
                 subtotal += unitPrice * qty;
                 selectedCount++;
             });
 
+            // Update subtotal label to show the selected count
             document.getElementById('subtotalLabel').textContent = `Subtotal (${selectedCount} item${selectedCount !== 1 ? 's' : ''})`;
             document.getElementById('subtotalValue').textContent = '£' + subtotal.toFixed(2);
 
+            // Apply discount if one has been validated and stored
             let total = subtotal;
             if (appliedDiscount > 0) {
                 const discountAmt = subtotal * (appliedDiscount / 100);
@@ -244,29 +343,39 @@
                 document.getElementById('discountValue').textContent = '-£' + discountAmt.toFixed(2);
                 document.getElementById('discountLine').style.display = 'flex';
             } else {
+                // Hide the discount line when no code is applied
                 document.getElementById('discountLine').style.display = 'none';
             }
 
             document.getElementById('totalValue').textContent = '£' + total.toFixed(2);
 
-            // Update hidden checkboxes for form POST
+            // Rebuild hidden inputs so the GET form submits the correct
+            // BasketProductsIds to BasketsController.Confirmation()
             const hidden = document.getElementById('hiddenCheckboxes');
             hidden.innerHTML = '';
             document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
                 const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'selectedProductIds';
+                input.type  = 'hidden';
+                input.name  = 'selectedProductIds';
                 input.value = cb.value;
                 hidden.appendChild(input);
             });
 
+            // Disable the checkout button when nothing is selected
             const btn = document.getElementById('checkoutBtn');
             if (btn) btn.disabled = selectedCount === 0;
         }
 
-        // ── Update quantity ───────────────────────────
+        // ── updateQty ─────────────────────────────────────────────
+        // POSTs a quantity update to Baskets/UpdateQuantity via fetch.
+        // If newQty is 0, delegates to removeItem() instead.
+        // On success, updates the qty display, button onclicks,
+        // line price, and recalculates the summary.
         async function updateQty(basketProductId, newQty) {
+            // Prevent going below zero
             if (newQty < 0) return;
+
+            // Treat qty 0 as a remove action
             if (newQty === 0) {
                 await removeItem(basketProductId);
                 return;
@@ -276,31 +385,36 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'RequestVerificationToken': token
+                    'RequestVerificationToken': token  // Required for [ValidateAntiForgeryToken]
                 },
                 body: `basketProductId=${basketProductId}&quantity=${newQty}`
             });
 
             if (res.ok) {
+                // Update the displayed quantity
                 const qtyEl = document.getElementById('qty-' + basketProductId);
-                const item = document.getElementById('item-' + basketProductId);
+                const item  = document.getElementById('item-' + basketProductId);
                 const unitPrice = parseFloat(item.dataset.price);
 
                 qtyEl.textContent = newQty;
 
-                // Update the +/- button onclick values
+                // Re-wire the +/- buttons so they reference the new quantity
                 const btns = item.querySelectorAll('.qty-btn');
                 btns[0].setAttribute('onclick', `updateQty(${basketProductId}, ${newQty - 1})`);
                 btns[1].setAttribute('onclick', `updateQty(${basketProductId}, ${newQty + 1})`);
 
-                // Update line price
+                // Recalculate and display the updated line price
                 document.getElementById('price-' + basketProductId).textContent = '£' + (unitPrice * newQty).toFixed(2);
 
+                // Recalculate the order summary totals
                 updateSummary();
             }
         }
 
-        // ── Remove item ───────────────────────────────
+        // ── removeItem ────────────────────────────────────────────
+        // POSTs to Baskets/RemoveProduct to delete the item from the DB,
+        // then removes the card and warning DOM elements.
+        // If the basket is now empty, reloads the page to show empty state.
         async function removeItem(basketProductId) {
             const res = await fetch('/Baskets/RemoveProduct', {
                 method: 'POST',
@@ -312,40 +426,51 @@
             });
 
             if (res.ok) {
+                // Remove the item card and its warning banner from the DOM
                 document.getElementById('item-' + basketProductId)?.remove();
                 document.getElementById('warning-' + basketProductId)?.remove();
 
-                // If basket now empty, reload to show empty state
+                // If no items remain, reload to trigger the empty state render
                 if (document.querySelectorAll('.basket-item').length === 0) {
                     location.reload();
                     return;
                 }
 
+                // Otherwise, update the summary and counters
                 updateSummary();
                 updateSelectAll();
                 updateSelectedCount();
             }
         }
 
-        // ── Discount code ─────────────────────────────
+        // ── applyDiscount ─────────────────────────────────────────
+        // Sends the entered code to Baskets/ValidateDiscount via GET.
+        // If valid, stores the percentage and code, updates the summary.
+        // If invalid, clears any previously applied discount.
         async function applyDiscount() {
             const code = document.getElementById('discountCodeInput').value.trim();
-            const msg = document.getElementById('discountMsg');
+            const msg  = document.getElementById('discountMsg');
 
+            // Client-side guard — don't hit the server with an empty string
             if (!code) {
                 msg.textContent = 'Please enter a code.';
-                msg.className = 'discount-msg error';
+                msg.className   = 'discount-msg error';
                 return;
             }
 
-            const res = await fetch(`/Baskets/ValidateDiscount?code=${encodeURIComponent(code)}`);
+            // Call the validation endpoint — returns { valid, percentage, code } or { valid, message }
+            const res  = await fetch(`/Baskets/ValidateDiscount?code=${encodeURIComponent(code)}`);
             const data = await res.json();
 
             if (data.valid) {
+                // Store the discount for use in updateSummary()
                 appliedDiscount = data.percentage;
-                appliedCode = data.code;
+                appliedCode     = data.code;
+
+                // Write the code into the hidden form field so it's passed to Confirmation
                 document.getElementById('appliedCodeInput').value = appliedCode;
 
+                // Show the green applied banner
                 const appliedDiv = document.getElementById('discountApplied');
                 document.getElementById('discountAppliedText').textContent = `✓ ${data.code} applied — ${data.percentage}% off`;
                 appliedDiv.style.display = 'block';
@@ -353,18 +478,20 @@
                 msg.textContent = '';
                 updateSummary();
             } else {
+                // Reset discount state if the code is invalid or inactive
                 appliedDiscount = 0;
-                appliedCode = '';
+                appliedCode     = '';
                 document.getElementById('appliedCodeInput').value = '';
                 document.getElementById('discountApplied').style.display = 'none';
 
+                // Show the error message returned by the server
                 msg.textContent = data.message;
-                msg.className = 'discount-msg error';
+                msg.className   = 'discount-msg error';
                 updateSummary();
             }
         }
 
-        // Trigger on Enter in discount input
+        // Allow pressing Enter in the discount input to trigger Apply
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('discountCodeInput')?.addEventListener('keydown', e => {
                 if (e.key === 'Enter') { e.preventDefault(); applyDiscount(); }

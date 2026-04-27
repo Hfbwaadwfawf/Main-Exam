@@ -556,7 +556,7 @@ html.high-contrast .card, html.high-contrast .product-card, html.high-contrast .
 html.high-contrast a { text-decoration: underline; }
 html.high-contrast .site-nav { border-bottom: 2px solid #000; }
 
-/* ─── identity auth pages (login, register, logout) ─────── */
+/*identity auth pages (login, register, logout) */
 /* these pages render through the Identity RCL so we override here */
 .auth-page-wrap { min-height: calc(100vh - 80px); display: flex; align-items: flex-start; justify-content: center; padding: 3rem 1rem 4rem; }
 .auth-page-wrap h1, .auth-page-wrap h2 { font-size: 1.8rem; font-weight: 700; color: var(--text); margin-bottom: .25rem; }
