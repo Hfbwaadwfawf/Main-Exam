@@ -3,6 +3,26 @@
   "WorkspaceRootPath": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|c:\\users\\digi-t-y2-4\\documents\\main-exam\\greenfield\\greenfield\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|c:\\users\\digi-t-y2-4\\documents\\main-exam\\greenfield\\greenfield\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|c:\\users\\digi-t-y2-4\\documents\\main-exam\\greenfield\\greenfield\\controllers\\basketscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\controllers\\basketscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|c:\\users\\digi-t-y2-4\\documents\\main-exam\\greenfield\\greenfield\\controllers\\dashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\controllers\\dashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|c:\\users\\digi-t-y2-4\\documents\\main-exam\\greenfield\\greenfield\\views\\baskets\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\views\\baskets\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|c:\\users\\digi-t-y2-4\\documents\\main-exam\\greenfield\\greenfield\\views\\dashboard\\standarddashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\views\\dashboard\\standarddashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -39,10 +59,6 @@
       "RelativeMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\views\\baskets\\confirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|c:\\users\\digi-t-y2-4\\documents\\main-exam\\greenfield\\greenfield\\views\\baskets\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\views\\baskets\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|c:\\users\\digi-t-y2-4\\documents\\main-exam\\greenfield\\greenfield\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -71,6 +87,130 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\appsettings.json",
+              "RelativeDocumentMoniker": "GreenField\\appsettings.json",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\appsettings.json",
+              "RelativeToolTip": "GreenField\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-29T14:04:44.55Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "GreenField\\Controllers\\ProductsController.cs",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "GreenField\\Controllers\\ProductsController.cs",
+              "ViewState": "AgIAAFkAAAAAAAAAAAAIwGkAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-29T13:22:14.529Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DashboardController.cs",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Controllers\\DashboardController.cs",
+              "RelativeDocumentMoniker": "GreenField\\Controllers\\DashboardController.cs",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Controllers\\DashboardController.cs",
+              "RelativeToolTip": "GreenField\\Controllers\\DashboardController.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-29T13:21:52.528Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Details.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Baskets\\Details.cshtml",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Details.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Baskets\\Details.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-24T12:42:10.535Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAGUAAAAAAAAAAAAhwIcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-24T11:02:14.018Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Products\\Create.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Products\\Create.cshtml",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Products\\Create.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Products\\Create.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-24T11:00:09.184Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAiwG8AAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-24T10:59:51.903Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Create.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Baskets\\Create.cshtml",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Create.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Baskets\\Create.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-24T09:22:54.414Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "OrderSuccess.cshtml",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\OrderSuccess.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Baskets\\OrderSuccess.cshtml",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\OrderSuccess.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Baskets\\OrderSuccess.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-24T09:22:17.878Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Index.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Baskets\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Index.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Baskets\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-24T09:22:02.317Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "StandardDashboard.cshtml",
               "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Dashboard\\StandardDashboard.cshtml",
               "RelativeDocumentMoniker": "GreenField\\Views\\Dashboard\\StandardDashboard.cshtml",
@@ -84,43 +224,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "About.cshtml",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\About.cshtml",
-              "RelativeDocumentMoniker": "GreenField\\Views\\Home\\About.cshtml",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\About.cshtml",
-              "RelativeToolTip": "GreenField\\Views\\Home\\About.cshtml",
-              "ViewState": "AgIAAGUAAAAAAAAAAAAcwIUAAABhAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-27T14:13:55.918Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Privacy.cshtml",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\Privacy.cshtml",
-              "RelativeDocumentMoniker": "GreenField\\Views\\Home\\Privacy.cshtml",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\Privacy.cshtml",
-              "RelativeToolTip": "GreenField\\Views\\Home\\Privacy.cshtml",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAcwH4AAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-27T14:13:41.912Z",
+              "Title": "BasketsController.cs",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Controllers\\BasketsController.cs",
+              "RelativeDocumentMoniker": "GreenField\\Controllers\\BasketsController.cs",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Controllers\\BasketsController.cs",
+              "RelativeToolTip": "GreenField\\Controllers\\BasketsController.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAgwAoAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-29T11:55:53.875Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "site.css",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\wwwroot\\css\\site.css",
-              "RelativeDocumentMoniker": "GreenField\\wwwroot\\css\\site.css",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\wwwroot\\css\\site.css",
-              "RelativeToolTip": "GreenField\\wwwroot\\css\\site.css",
-              "ViewState": "AgIAACgCAAAAAAAAAAAAwDsCAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-04-27T14:12:56.869Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 10,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "GreenField\\Data\\ApplicationDbContext.cs",
@@ -132,79 +248,43 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "site.css",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "GreenField\\wwwroot\\css\\site.css",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "GreenField\\wwwroot\\css\\site.css",
+              "ViewState": "AgIAACgCAAAAAAAAAAAAwDsCAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-04-27T14:12:56.869Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "Details.cshtml",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Details.cshtml",
-              "RelativeDocumentMoniker": "GreenField\\Views\\Baskets\\Details.cshtml",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Details.cshtml",
-              "RelativeToolTip": "GreenField\\Views\\Baskets\\Details.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "Privacy.cshtml",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\Privacy.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Home\\Privacy.cshtml",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\Privacy.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Home\\Privacy.cshtml",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAcwH4AAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-24T12:42:10.535Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "GreenField\\Views\\Home\\Index.cshtml",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "GreenField\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAGUAAAAAAAAAAAAhwIcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-24T11:02:14.018Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Products\\Create.cshtml",
-              "RelativeDocumentMoniker": "GreenField\\Views\\Products\\Create.cshtml",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Products\\Create.cshtml",
-              "RelativeToolTip": "GreenField\\Views\\Products\\Create.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-24T11:00:09.184Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "GreenField\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "GreenField\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAE4AAAAAAAAAAAAiwG8AAABJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-24T10:59:51.903Z"
+              "WhenOpened": "2026-04-27T14:13:41.912Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Create.cshtml",
-              "RelativeDocumentMoniker": "GreenField\\Views\\Baskets\\Create.cshtml",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Create.cshtml",
-              "RelativeToolTip": "GreenField\\Views\\Baskets\\Create.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "About.cshtml",
+              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\About.cshtml",
+              "RelativeDocumentMoniker": "GreenField\\Views\\Home\\About.cshtml",
+              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Home\\About.cshtml",
+              "RelativeToolTip": "GreenField\\Views\\Home\\About.cshtml",
+              "ViewState": "AgIAAGUAAAAAAAAAAAAcwIUAAABhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-24T09:22:54.414Z"
+              "WhenOpened": "2026-04-27T14:13:55.918Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "OrderSuccess.cshtml",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\OrderSuccess.cshtml",
-              "RelativeDocumentMoniker": "GreenField\\Views\\Baskets\\OrderSuccess.cshtml",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\OrderSuccess.cshtml",
-              "RelativeToolTip": "GreenField\\Views\\Baskets\\OrderSuccess.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAABBAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-24T09:22:17.878Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 13,
               "Title": "Confirmation.cshtml",
               "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Confirmation.cshtml",
               "RelativeDocumentMoniker": "GreenField\\Views\\Baskets\\Confirmation.cshtml",
@@ -216,19 +296,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Index.cshtml",
-              "RelativeDocumentMoniker": "GreenField\\Views\\Baskets\\Index.cshtml",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Baskets\\Index.cshtml",
-              "RelativeToolTip": "GreenField\\Views\\Baskets\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-24T09:22:02.317Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 17,
               "Title": "SeedData.cs",
               "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Data\\SeedData.cs",
               "RelativeDocumentMoniker": "GreenField\\Data\\SeedData.cs",
