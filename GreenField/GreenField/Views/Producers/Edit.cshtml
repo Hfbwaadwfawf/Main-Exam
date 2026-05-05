@@ -1,3 +1,4 @@
+@* edit producer form — admins get a user dropdown, producers see a hidden field (can't change ownership) *@
 @model GreenField.Models.Producers
 @{
     ViewData["Title"] = "Edit Producer";
@@ -13,7 +14,7 @@
             <input type="hidden" asp-for="ProducersId" />
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            @* admins get dropdown, producers get hidden field *@
+            @* ViewBag.UserList is only set by the controller when the caller is an admin *@
             @if (ViewBag.UserList != null)
             {
                 <div class="form-group mb-2">
@@ -24,6 +25,7 @@
             }
             else
             {
+                @* producer editing their own profile — UserId is fixed, just pass it through hidden *@
                 <input type="hidden" asp-for="UserId" />
             }
             <div class="form-group mb-2">

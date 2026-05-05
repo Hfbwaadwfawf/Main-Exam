@@ -1,13 +1,13 @@
+@* product detail page — shows full info, stock status, quantity picker and add to basket *@
 @model GreenField.Models.Products
 @{
     ViewData["Title"] = Model.ProductName;
 }
 
 <div class="product-details-page">
-
     <div class="product-details-layout">
 
-        <!-- Image -->
+        @* left column — product image *@
         <div class="product-details-image">
             @if (!string.IsNullOrEmpty(Model.Image))
             {
@@ -19,12 +19,13 @@
             }
         </div>
 
-        <!-- Info -->
+        @* right column — product info, add to basket, admin actions *@
         <div class="product-details-info">
 
             <p class="product-details-category">@Model.category</p>
             <h1 class="product-details-name">@Model.ProductName</h1>
 
+            @* producer name with link to filter the store by this producer *@
             @if (Model.Producers != null)
             {
                 <p class="product-details-producer">
@@ -46,6 +47,7 @@
                 <p class="product-details-desc">@Model.Description</p>
             }
 
+            @* stock indicator *@
             <div class="product-details-meta">
                 @if (Model.IsAvailable && Model.Stock > 0)
                 {
@@ -61,12 +63,14 @@
                 }
             </div>
 
+            @* add to basket — only shown if in stock and logged in *@
             @if (Model.IsAvailable && Model.Stock > 0 && User.Identity?.IsAuthenticated == true)
             {
                 <form asp-controller="Baskets" asp-action="AddProduct" method="post" class="add-to-basket-form">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="productId" value="@Model.ProductsId" />
                     <div class="qty-row">
+                        @* +/- buttons call adjustQty() in JS to keep qty within stock bounds *@
                         <div class="qty-control">
                             <button type="button" class="qty-btn" onclick="adjustQty(-1)">−</button>
                             <input type="number" name="quantity" id="qtyInput" value="1" min="1" max="@Model.Stock" class="qty-input" readonly />
@@ -80,16 +84,18 @@
             }
             else if (User.Identity?.IsAuthenticated == false)
             {
+                @* unauthenticated users see a prompt to log in *@
                 <a asp-area="Identity" asp-page="/Account/Login" class="btn-outline">Log in to purchase</a>
             }
 
-            <!-- Admin / Producer actions -->
+            @* edit/delete links for admins and producers *@
             @if (User.IsInRole("Admin") || User.IsInRole("Producer"))
             {
                 <div class="product-details-admin-actions">
                     <a asp-action="Edit" asp-route-id="@Model.ProductsId" class="action-link">
                         <i class="bi bi-pencil"></i> Edit
                     </a>
+                    @* delete is admin only — producers shouldn't hard-delete *@
                     @if (User.IsInRole("Admin"))
                     {
                         <a asp-action="Delete" asp-route-id="@Model.ProductsId" class="action-link danger">
@@ -105,10 +111,10 @@
 
         </div>
     </div>
-
 </div>
 
 <script>
+    // clamps quantity between 1 and the max stock
     function adjustQty(delta) {
         const input = document.getElementById('qtyInput');
         const max = parseInt(input.max);

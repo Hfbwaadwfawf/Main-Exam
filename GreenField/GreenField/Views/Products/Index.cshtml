@@ -1,30 +1,37 @@
+@* store page — model is the filtered list of available products *@
 @model IEnumerable<GreenField.Models.Products>
 @{
     ViewData["Title"] = "Store";
+    @* pull filter state back from ViewData so inputs stay populated after submit *@
     var producers = ViewData["Producers"] as Microsoft.AspNetCore.Mvc.Rendering.SelectList;
-    var currentSearch = ViewData["CurrentSearch"]?.ToString() ?? "";
+    var currentSearch   = ViewData["CurrentSearch"]?.ToString()   ?? "";
     var currentProducer = ViewData["CurrentProducer"]?.ToString() ?? "";
     var currentCategory = ViewData["CurrentCategory"]?.ToString() ?? "";
     var currentMinPrice = ViewData["CurrentMinPrice"]?.ToString() ?? "";
     var currentMaxPrice = ViewData["CurrentMaxPrice"]?.ToString() ?? "";
+    @* build category list dynamically from whatever's in the filtered product set *@
     var categories = Model.Select(p => p.category).Where(c => !string.IsNullOrEmpty(c)).Distinct().OrderBy(c => c).ToList();
 }
 
+@* antiforgery token is read by JS for the add-to-basket AJAX POST *@
 @Html.AntiForgeryToken()
 
+@* two-column layout — sidebar filters on left, product grid on right *@
 <div class="store-layout">
 
-    <!-- ── Sidebar ── -->
+    @* sidebar — all filters submit via a GET form so the URL is shareable *@
     <aside class="store-sidebar">
         <h2 class="sidebar-heading">Filters</h2>
 
         <form method="get" asp-action="Index" asp-controller="Products" id="filterForm">
 
+            @* text search — filters by product name *@
             <div class="filter-section">
                 <p class="filter-label">SEARCH</p>
                 <input type="text" name="search" class="form-input" placeholder="Search products..." value="@currentSearch" />
             </div>
 
+            @* category filter — JS sets the hidden input and adds the active class *@
             <div class="filter-section">
                 <p class="filter-label">CATEGORY</p>
                 <ul class="category-list">
@@ -46,9 +53,11 @@
                         </li>
                     }
                 </ul>
+                @* the hidden input is what actually gets submitted — JS writes into it *@
                 <input type="hidden" name="category" id="categoryInput" value="@currentCategory" />
             </div>
 
+            @* price range — min and max as number inputs *@
             <div class="filter-section">
                 <p class="filter-label">PRICE RANGE</p>
                 <div class="price-range-row">
@@ -58,6 +67,7 @@
                 </div>
             </div>
 
+            @* producer filter — JS handles toggle behaviour (click same one to deselect) *@
             <div class="filter-section">
                 <p class="filter-label">PRODUCER</p>
                 <ul class="producer-filter-list">
@@ -84,7 +94,7 @@
         </form>
     </aside>
 
-    <!-- ── Main ── -->
+    @* main content area — product count header and grid *@
     <main class="store-main">
 
         <div class="store-main-header">
@@ -92,6 +102,7 @@
                 <h1 class="page-title">Store</h1>
                 <p class="store-count">Showing @Model.Count() product@(Model.Count() != 1 ? "s" : "")</p>
             </div>
+            @* add product button only shown to admins and producers *@
             @if (User.IsInRole("Admin") || User.IsInRole("Producer"))
             {
                 <a asp-action="Create" class="btn-primary">
@@ -100,6 +111,7 @@
             }
         </div>
 
+        @* flash messages *@
         @if (TempData["Success"] != null)
         {
             <div class="alert alert-success">@TempData["Success"]</div>
@@ -109,6 +121,7 @@
             <div class="alert alert-danger">@TempData["Error"]</div>
         }
 
+        @* empty state — shown if filters return no results *@
         @if (!Model.Any())
         {
             <div class="store-empty">
@@ -123,6 +136,7 @@
                 @foreach (var product in Model)
                 {
                     <div class="product-card">
+                        @* clicking the card body navigates to the product detail page *@
                         <a asp-action="Details" asp-route-id="@product.ProductsId" class="product-card-link">
                             <div class="product-card-image">
                                 @if (!string.IsNullOrEmpty(product.Image))
@@ -143,6 +157,7 @@
                                 </div>
                             </div>
                         </a>
+                        @* add to basket button only shown to logged in users — calls addToBasket() via AJAX *@
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <button class="btn-add-to-basket"
@@ -150,6 +165,7 @@
                                 <i class="bi bi-basket3-fill"></i> Add
                             </button>
                         }
+                        @* edit/delete links only for admins and producers *@
                         @if (User.IsInRole("Admin") || User.IsInRole("Producer"))
                         {
                             <div class="product-card-admin">
@@ -167,14 +183,17 @@
 
 @section Scripts {
     <script>
+        // read the antiforgery token for use in fetch POSTs
         const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
 
+        // set the hidden category input and update active button styling
         function setCategory(cat, btn) {
             document.getElementById('categoryInput').value = cat;
             document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         }
 
+        // set or toggle the producer filter — clicking the same one deselects it
         function setProducer(val, btn) {
             const input = document.getElementById('producerInput');
             if (input.value === val) {
@@ -187,6 +206,7 @@
             }
         }
 
+        // AJAX add to basket — updates the nav badge count without a page reload
         async function addToBasket(productId, btn) {
             const original = btn.innerHTML;
             btn.disabled = true;
@@ -205,13 +225,16 @@
                 const data = await res.json();
 
                 if (data.success) {
+                    // show a green "Added" state briefly
                     btn.innerHTML = '<i class="bi bi-check-lg"></i> Added';
                     btn.classList.add('btn-added');
 
+                    // update basket badge count in the nav
                     const badge = document.querySelector('.basket-badge');
                     if (badge) {
                         badge.textContent = data.basketCount;
                     } else {
+                        // create the badge if it doesn't exist yet (first item added)
                         const basketBtn = document.querySelector('.nav-basket');
                         if (basketBtn) {
                             const span = document.createElement('span');
@@ -221,6 +244,7 @@
                         }
                     }
 
+                    // reset button after 1.5s
                     setTimeout(() => {
                         btn.innerHTML = original;
                         btn.classList.remove('btn-added');

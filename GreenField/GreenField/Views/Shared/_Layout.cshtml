@@ -21,9 +21,23 @@
         <div class="nav-right">
             @if (User.Identity?.IsAuthenticated == true)
             {
+                @* load the real basket count on every page so the badge stays accurate *@
+                @{
+                    var _basketCount = 0;
+                    try {
+                        var _db = Context.RequestServices.GetService<GreenField.Data.ApplicationDbContext>();
+                        var _um = Context.RequestServices.GetService<Microsoft.AspNetCore.Identity.UserManager<Microsoft.AspNetCore.Identity.IdentityUser>>();
+                        var _uid = _um?.GetUserId(User);
+                        if (_db != null && _uid != null)
+                            _basketCount = _db.BasketProducts
+                                .Where(bp => bp.Basket.UserId == _uid)
+                                .Sum(bp => (int?)bp.Quantity) ?? 0;
+                    } catch { }
+                }
                 <a asp-controller="Baskets" asp-action="Index" class="nav-basket">
                     <i class="bi bi-basket3-fill" style="font-size:1.2rem;"></i>
-                    <span class="basket-badge">0</span>
+                    @* hide the badge entirely when basket is empty *@
+                    <span class="basket-badge" style="@(_basketCount == 0 ? "display:none;" : "")">@_basketCount</span>
                 </a>
                 <a asp-area="" asp-controller="Dashboard" asp-action="Index">
                     <i class="bi bi-person-fill"></i>

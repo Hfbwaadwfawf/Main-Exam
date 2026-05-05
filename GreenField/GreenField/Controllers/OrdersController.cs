@@ -145,6 +145,72 @@ namespace GreenField.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET — edit order page, standard users only, pending orders only
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+            var order = await _context.Orders
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Products)
+                .FirstOrDefaultAsync(o => o.OrdersId == id);
+
+            if (order == null) return NotFound();
+
+            // only the owner can edit their order
+            if (order.UserId != userId) return Forbid();
+
+            // can only edit while still pending
+            if (order.Status != OrderStatus.Pending)
+            {
+                TempData["Error"] = "Only pending orders can be edited.";
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            return View(order);
+        }
+
+        // POST — saves the edited delivery address or collection date
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int orderId, string? deliveryAddress, DateOnly? collectionDate)
+        {
+            var userId = _userManager.GetUserId(User);
+            var order = await _context.Orders.FindAsync(orderId);
+
+            if (order == null) return NotFound();
+            if (order.UserId != userId) return Forbid();
+
+            if (order.Status != OrderStatus.Pending)
+            {
+                TempData["Error"] = "Only pending orders can be edited.";
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            // update whichever field applies to this order type
+            if (order.IsDelivery)
+            {
+                if (string.IsNullOrWhiteSpace(deliveryAddress))
+                {
+                    TempData["Error"] = "Please enter a delivery address.";
+                    return View(order);
+                }
+                order.DeliveryAddress = deliveryAddress;
+            }
+            else
+            {
+                if (collectionDate == null || collectionDate.Value <= DateOnly.FromDateTime(DateTime.UtcNow))
+                {
+                    TempData["Error"] = "Please choose a valid future collection date.";
+                    return View(order);
+                }
+                order.CollectionDate = collectionDate;
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Order updated successfully.";
+            return RedirectToAction("Index", "Dashboard");
+        }
+
         // GET — delete confirmation page, admin only
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)

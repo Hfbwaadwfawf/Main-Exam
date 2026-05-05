@@ -1,3 +1,4 @@
+@* create product form — admins get a producer dropdown, producers get a hidden field *@
 @model GreenField.Models.Products
 @{
     ViewData["Title"] = "Add Product";
@@ -12,7 +13,8 @@
             @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            @* admins pick the producer, producers are auto-assigned to their own *@
+            @* admins choose the producer from a dropdown *@
+            @* producers get a hidden field pre-filled with their own producer id by the controller *@
             @if (User.IsInRole("Admin"))
             {
                 <div class="form-group mb-2">

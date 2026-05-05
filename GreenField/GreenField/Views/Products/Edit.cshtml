@@ -1,3 +1,4 @@
+@* edit product form — admins get a producer dropdown, producers get a hidden field to prevent reassignment *@
 @model GreenField.Models.Products
 @{
     ViewData["Title"] = "Edit Product";
@@ -10,10 +11,12 @@
     <div class="panel-card" style="max-width:520px;">
         <form asp-action="Edit" method="post">
             @Html.AntiForgeryToken()
+            @* hidden so the id is included in the POST *@
             <input type="hidden" asp-for="ProductsId" />
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            @* admins see the producer dropdown, producers just get a hidden field *@
+            @* admins can reassign the product to a different producer *@
+            @* producers get a hidden field — they can't change ownership *@
             @if (User.IsInRole("Admin"))
             {
                 <div class="form-group mb-2">

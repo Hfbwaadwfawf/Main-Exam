@@ -3,11 +3,13 @@
     ViewData["Title"] = "Something went wrong";
 }
 
+@* centred error page with a red icon and go home button *@
 <div class="static-page" style="text-align:center;padding-top:4rem;">
     <i class="bi bi-exclamation-triangle-fill" style="font-size:3rem;color:var(--red);display:block;margin-bottom:1rem;"></i>
     <h1 class="page-title" style="color:var(--red);">Something went wrong</h1>
     <p class="page-subtitle" style="margin:0 auto 2rem;">An unexpected error occurred. If this keeps happening, contact support.</p>
 
+    @* only show the request ID in development mode (ShowRequestId is set in ErrorViewModel) *@
     @if (Model.ShowRequestId)
     {
         <p class="text-sm text-muted mb-3">Request ID: <code>@Model.RequestId</code></p>

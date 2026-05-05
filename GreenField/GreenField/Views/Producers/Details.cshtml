@@ -1,3 +1,4 @@
+@* producer detail page — shows full profile with admin edit/delete actions *@
 @model GreenField.Models.Producers
 @{
     ViewData["Title"] = Model.BusinessName;
@@ -18,6 +19,7 @@
                 <p class="producer-location"><i class="bi bi-geo-alt-fill"></i> @Model.BusinessBasedIn</p>
             }
             <p class="producer-desc">@Model.BusinessDescription</p>
+            @* admin only edit/delete links *@
             @if (User.IsInRole("Admin"))
             {
                 <div class="action-links mt-2">

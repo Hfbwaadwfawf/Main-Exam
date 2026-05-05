@@ -1,3 +1,4 @@
+@* producers listing page — shows all producers with a search bar and partner banner *@
 @model IEnumerable<GreenField.Models.Producers>
 @{
     ViewData["Title"] = "Our Producers";
@@ -5,7 +6,7 @@
 
 <div class="producers-page">
 
-    <!-- Header -->
+    @* page header with optional add producer button for admins *@
     <div class="producers-header">
         <div class="producers-header-text">
             <h1 class="page-title">Our Producers</h1>
@@ -19,6 +20,7 @@
         }
     </div>
 
+    @* flash messages *@
     @if (TempData["Success"] != null)
     {
         <div class="alert alert-success">@TempData["Success"]</div>
@@ -28,7 +30,7 @@
         <div class="alert alert-danger">@TempData["Error"]</div>
     }
 
-    <!-- Why We Partner banner -->
+    @* partner banner — shows aggregate stats about the producer network *@
     <div class="partner-banner">
         <div class="partner-banner-left">
             <h2 class="partner-title">Why We Partner With Local</h2>
@@ -54,24 +56,24 @@
         </div>
     </div>
 
-    <!-- Search bar -->
+    @* client-side search — filters visible cards by name or location *@
     <div class="producers-search-bar">
         <input type="text" id="producerSearch" class="form-input" placeholder="Search producers..." />
     </div>
 
-    <!-- Producer grid -->
+    @* producer cards grid — data attributes used by the search JS *@
     <div class="producers-grid" id="producerGrid">
         @foreach (var producer in Model)
         {
+            @* data-name and data-location are read by the search input listener *@
             <div class="producer-card" data-name="@producer.BusinessName.ToLower()" data-location="@producer.BusinessBasedIn?.ToLower()">
 
-                <!-- Image -->
                 <div class="producer-card-image">
+                    @* falls back to the demo logo if no logo is set *@
                     <img src="@(!string.IsNullOrEmpty(producer.Logo) ? producer.Logo : "/images/DemoLogo.png")"
                          alt="@producer.BusinessName" />
                 </div>
 
-                <!-- Body -->
                 <div class="producer-card-body">
                     <div class="producer-card-top">
                         <h3 class="producer-name">@producer.BusinessName</h3>
@@ -87,9 +89,11 @@
                     <div class="producer-card-footer">
                         <p class="producer-product-count">@(producer.Products?.Count(p => p.IsAvailable) ?? 0) products available</p>
                         <div class="producer-actions">
+                            @* view products filters the store by this producer *@
                             <a asp-controller="Products" asp-action="Index" asp-route-producerId="@producer.ProducersId" class="btn-outline">
                                 View Products
                             </a>
+                            @* admin only — edit and delete the producer record *@
                             @if (User.IsInRole("Admin"))
                             {
                                 <a asp-action="Edit" asp-route-id="@producer.ProducersId" class="action-link">Edit</a>
@@ -111,6 +115,7 @@
 </div>
 
 <script>
+    // filter producer cards as the user types — checks name and location
     document.getElementById('producerSearch')?.addEventListener('input', function () {
         const val = this.value.toLowerCase();
         document.querySelectorAll('.producer-card').forEach(card => {

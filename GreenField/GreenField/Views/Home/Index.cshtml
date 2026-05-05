@@ -1,9 +1,10 @@
+@* bind to HomeViewModel which holds featured products, producers and site stats *@
 @model GreenField.Models.ViewModels.HomeViewModel
 @{
     ViewData["Title"] = "Home";
 }
 
-<!-- ── Hero ── -->
+@* hero section — big banner with headline, CTA buttons and stat strip *@
 <section class="hero-section">
     <div class="hero-inner">
         <span class="hero-pill">Now serving Gloucestershire &amp; surrounds</span>
@@ -15,6 +16,7 @@
         </div>
     </div>
 
+    @* stat strip at the bottom of the hero — counts pulled from the database *@
     <div class="hero-stats">
         <div class="hero-stat">
             <p class="hero-stat-num">@Model.TotalProducers+</p>
@@ -35,7 +37,7 @@
     </div>
 </section>
 
-<!-- ── Featured Products ── -->
+@* featured products — 4 random available products picked in the controller *@
 <section class="home-section">
     <div class="home-section-header">
         <h2 class="section-title">Featured Products</h2>
@@ -44,6 +46,7 @@
     <div class="product-grid product-grid-4">
         @foreach (var product in Model.FeaturedProducts)
         {
+            @* the whole card is an anchor so clicking anywhere on it goes to the detail page *@
             <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ProductsId" class="product-card">
                 <div class="product-card-image">
                     @if (!string.IsNullOrEmpty(product.Image))
@@ -68,7 +71,7 @@
     </div>
 </section>
 
-<!-- ── Local Producers ── -->
+@* featured producers — up to 3 producers pulled in the controller *@
 <section class="home-section">
     <div class="home-section-header">
         <h2 class="section-title">Local Producers</h2>
@@ -101,6 +104,7 @@
                     </div>
                     <div class="producer-card-footer">
                         <p class="producer-product-count">@(producer.Products?.Count(p => p.IsAvailable) ?? 0) products available</p>
+                        @* view products filters the store by this producer *@
                         <a asp-controller="Products" asp-action="Index" asp-route-producerId="@producer.ProducersId" class="btn-outline">
                             View Products
                         </a>
@@ -111,7 +115,7 @@
     </div>
 </section>
 
-<!-- ── How It Works ── -->
+@* how it works — three step explainer cards *@
 <section class="home-section">
     <h2 class="section-title">How It Works</h2>
     <div class="how-grid">
@@ -132,4 +136,3 @@
         </div>
     </div>
 </section>
-

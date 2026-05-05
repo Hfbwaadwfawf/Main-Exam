@@ -1,40 +1,66 @@
+@* edit order page — standard users can update delivery address or collection date on pending orders *@
 @model GreenField.Models.Orders
 @{
     ViewData["Title"] = "Edit Order";
 }
 
-<h1 class="page-title">Edit Order</h1>
-<p class="muted">Order #@Model.OrdersId</p>
+<div class="static-page">
+    <a asp-controller="Dashboard" asp-action="Index" class="back-link">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+    <h1 class="page-title">Edit Order <span class="text-muted" style="font-size:1.2rem;">ORD-@Model.OrdersId.ToString("D4")</span></h1>
 
-<div style="max-width:520px;">
-    <form asp-action="Edit" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="OrdersId" />
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
 
-        <div class="form-group">
-            <label asp-for="Status">Status</label>
-            <select asp-for="Status" class="form-input"
-                    asp-items="Html.GetEnumSelectList<GreenField.Models.OrderStatus>()"></select>
+    <div class="panel-card" style="max-width:520px;">
+
+        @* order summary so the user knows what they're editing *@
+        <div class="mb-3" style="padding-bottom:1rem;border-bottom:1px solid var(--border);">
+            <p class="text-sm text-muted mb-1">Items in this order</p>
+            @foreach (var op in Model.OrderProducts ?? new List<GreenField.Models.OrderProducts>())
+            {
+                <p class="text-sm">@op.Products?.ProductName &times; @op.Quantity</p>
+            }
+            <p class="bold mt-2">Total: £@Model.TotalPrice.ToString("F2")</p>
         </div>
 
-        <div class="form-group">
-            <label asp-for="IsDelivery">Delivery?</label>
-            <input asp-for="IsDelivery" type="checkbox" />
-        </div>
+        <form asp-action="Edit" asp-controller="Orders" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="orderId" value="@Model.OrdersId" />
 
-        <div class="form-group">
-            <label asp-for="DeliveryAddress">Delivery Address</label>
-            <input asp-for="DeliveryAddress" class="form-input" />
-        </div>
+            @* show delivery address field for delivery orders, collection date for collection orders *@
+            @if (Model.IsDelivery)
+            {
+                <div class="form-group mb-3">
+                    <label for="deliveryAddress">Delivery Address</label>
+                    <textarea id="deliveryAddress" name="deliveryAddress" class="form-input" rows="3"
+                              placeholder="Enter your full delivery address">@Model.DeliveryAddress</textarea>
+                    <p class="text-sm text-muted mt-1">Update the address you'd like this delivered to.</p>
+                </div>
+            }
+            else
+            {
+                <div class="form-group mb-3">
+                    <label for="collectionDate">Collection Date</label>
+                    @{
+                        // set tomorrow as the minimum selectable date
+                        var minDate = DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd");
+                        var currentDate = Model.CollectionDate?.ToString("yyyy-MM-dd") ?? "";
+                    }
+                    <input type="date" id="collectionDate" name="collectionDate"
+                           class="form-input" style="max-width:260px;"
+                           min="@minDate" value="@currentDate" />
+                    <p class="text-sm text-muted mt-1">Choose a new date to collect your order.</p>
+                </div>
+            }
 
-        <div class="form-group">
-            <label asp-for="CollectionDate">Collection / Delivery Date</label>
-            <input asp-for="CollectionDate" type="datetime-local" class="form-input" />
-        </div>
-
-        <div class="form-group" style="margin-top:1.5rem; display:flex; gap:.75rem;">
-            <input type="submit" value="Save Changes" class="btn-primary" />
-            <a asp-action="Details" asp-route-id="@Model.OrdersId" class="btn-secondary">Cancel</a>
-        </div>
-    </form>
+            <div style="display:flex;gap:.75rem;">
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <a asp-controller="Dashboard" asp-action="Index" class="btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div>
 </div>
