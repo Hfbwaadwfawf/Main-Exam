@@ -1,37 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|c:\\users\\digi-t-y2-4\\documents\\main-exam\\greenfield\\greenfield\\views\\dashboard\\standarddashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{61E8A518-E21A-4821-81B0-9EFAD5C8D42B}|GreenField\\GreenField.csproj|solutionrelative:greenfield\\views\\dashboard\\standarddashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "StandardDashboard.cshtml",
-              "DocumentMoniker": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Dashboard\\StandardDashboard.cshtml",
-              "RelativeDocumentMoniker": "GreenField\\Views\\Dashboard\\StandardDashboard.cshtml",
-              "ToolTip": "C:\\Users\\Digi-T-Y2-4\\Documents\\Main-Exam\\GreenField\\GreenField\\Views\\Dashboard\\StandardDashboard.cshtml",
-              "RelativeToolTip": "GreenField\\Views\\Dashboard\\StandardDashboard.cshtml",
-              "ViewState": "AgIAADMAAAAAAAAAAAAAAE0AAABQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-01T08:07:14.435Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
+      "DocumentGroups": []
     }
   ]
 }
